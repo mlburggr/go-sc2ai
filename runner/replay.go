@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"io/ioutil"
 	"log"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -34,7 +34,7 @@ func SetReplayPath(path string) error {
 	replayDir = path
 
 	// Gather and append all files from the directory.
-	files, err := ioutil.ReadDir(path)
+	files, err := os.ReadDir(path)
 	if err != nil {
 		return err
 	}

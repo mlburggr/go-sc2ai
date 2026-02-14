@@ -3,17 +3,17 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"gopkg.in/src-d/go-git.v4"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	git "github.com/go-git/go-git/v5"
 )
 
 func main() {
 	// Checkout a temp copy of the API files
-	dir, err := ioutil.TempDir("", "s2client-proto")
+	dir, err := os.MkdirTemp("", "s2client-proto")
 	check(err)
 	defer os.RemoveAll(dir)
 
@@ -35,7 +35,7 @@ func main() {
 
 	// Get all the .proto files
 	protoDir := filepath.Join(dir, "s2clientprotocol")
-	files, err := ioutil.ReadDir(protoDir)
+	files, err := os.ReadDir(protoDir)
 	check(err)
 
 	s := string(os.PathSeparator)

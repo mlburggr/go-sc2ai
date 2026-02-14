@@ -1,10 +1,9 @@
 package runner
 
 import (
-	"math/rand"
+	"math/rand/v2"
 	"path/filepath"
 	"runtime"
-	"time"
 )
 
 var (
@@ -24,8 +23,7 @@ func SetMap(name string) {
 func Random1v1Map() string {
 	currentMaps := maps2021season1
 
-	rand.Seed(time.Now().UnixNano())
-	return currentMaps[rand.Intn(len(currentMaps))] + ".SC2Map"
+	return currentMaps[rand.IntN(len(currentMaps))] + ".SC2Map"
 }
 
 func mapPath() string {

@@ -62,6 +62,7 @@ var nameOverrides = map[string]string{
 	"Cancel_1519":            "",
 	"Cancel_2480":            "",
 	"Cancel_2482":            "",
+	"Cancel_4120":            "",
 	"Hellbat":                "HellionTank",
 	"LiberatorAAMode":        "",
 	"LiberatorAGMode":        "",
