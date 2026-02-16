@@ -1,11 +1,12 @@
 module github.com/chippydip/go-sc2ai
 
-go 1.22
+go 1.23
 
 require (
 	github.com/go-git/go-git/v5 v5.13.2
-	github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.5.3
+	github.com/planetscale/vtprotobuf v0.6.0
+	google.golang.org/protobuf v1.36.11
 )
 
 require (

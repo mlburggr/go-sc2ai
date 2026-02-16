@@ -12,7 +12,7 @@ func (img ImageData) Copy() ImageData {
 
 	return ImageData{
 		BitsPerPixel: img.BitsPerPixel,
-		Size_:        &Size2DI{X: img.Size_.X, Y: img.Size_.Y},
+		Size:         &Size2DI{X: img.Size.X, Y: img.Size.Y},
 		Data:         data,
 	}
 }
@@ -29,7 +29,7 @@ func (img ImageData) assertBPP(count int32) {
 func (img ImageData) Bits() ImageDataBits {
 	img.assertBPP(1)
 
-	return ImageDataBits{imageData{*img.Size_, img.Data}}
+	return ImageDataBits{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataBits is a bit-indexed version of ImageData.
@@ -39,7 +39,7 @@ type ImageDataBits struct {
 
 // NewImageDataBits returns an empty bit-indexed ImageData of the given size.
 func NewImageDataBits(w, h int32) ImageDataBits {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, (w*h+7)/8)
 
 	return ImageDataBits{imageData{size, data}}
@@ -101,7 +101,7 @@ func (img ImageDataBits) ToBytes() ImageDataBytes {
 func (img ImageData) Bytes() ImageDataBytes {
 	img.assertBPP(8)
 
-	return ImageDataBytes{imageData{*img.Size_, img.Data}}
+	return ImageDataBytes{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataBytes is a byte-indexed version of ImageData.
@@ -111,7 +111,7 @@ type ImageDataBytes struct {
 
 // NewImageDataBytes returns an empty byte-indexed ImageData of the given size.
 func NewImageDataBytes(w, h int32) ImageDataBytes {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, w*h)
 
 	return ImageDataBytes{imageData{size, data}}
@@ -147,7 +147,7 @@ func (img ImageDataBytes) Set(x, y int32, value byte) {
 func (img ImageData) Ints() ImageDataInt32 {
 	img.assertBPP(32)
 
-	return ImageDataInt32{imageData{*img.Size_, img.Data}}
+	return ImageDataInt32{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataInt32 is an int32-indexed version of ImageData.
@@ -158,7 +158,7 @@ type ImageDataInt32 struct {
 
 // NewImageDataInts returns an empty int32-indexed ImageData of the given size.
 func NewImageDataInts(w, h int32) ImageDataInt32 {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, w*h*4)
 
 	return ImageDataInt32{imageData{size, data}}

@@ -105,7 +105,7 @@ func (c *Client) CreateGame(mapPath string, players []*api.PlayerSetup, realtime
 	}
 	c.realtime = realtime
 
-	if r.Error != api.ResponseCreateGame_nil {
+	if r.Error != api.ResponseCreateGame_Error_nil {
 		return fmt.Errorf("%v: %v", r.Error, r.GetErrorDetails())
 	}
 
@@ -130,7 +130,7 @@ func (c *Client) RequestJoinGame(setup *api.PlayerSetup, options *api.InterfaceO
 		return err
 	}
 
-	if r.Error != api.ResponseJoinGame_nil {
+	if r.Error != api.ResponseJoinGame_Error_nil {
 		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
 	}
 
@@ -149,7 +149,7 @@ func (c *Client) RequestReplayInfo(path string) (*api.ResponseReplayInfo, error)
 	if err != nil {
 		return nil, err
 	}
-	if r.Error != api.ResponseReplayInfo_nil {
+	if r.Error != api.ResponseReplayInfo_Error_nil {
 		return nil, fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
 	}
 	return r, nil
@@ -168,7 +168,7 @@ func (c *Client) RequestStartReplay(request api.RequestStartReplay) error {
 	if err != nil {
 		return err
 	}
-	if r.Error != api.ResponseStartReplay_nil {
+	if r.Error != api.ResponseStartReplay_Error_nil {
 		return fmt.Errorf("%v: %v", r.Error.String(), r.GetErrorDetails())
 	}
 
