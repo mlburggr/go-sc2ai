@@ -101,11 +101,11 @@ type AbilityData_Target int32
 
 const (
 	AbilityData_Target_nil  AbilityData_Target = 0
-	AbilityData_None        AbilityData_Target = 1
-	AbilityData_Point       AbilityData_Target = 2
-	AbilityData_Unit        AbilityData_Target = 3
-	AbilityData_PointOrUnit AbilityData_Target = 4
-	AbilityData_PointOrNone AbilityData_Target = 5
+	AbilityData_None        AbilityData_Target = 1 // Does not require a target.
+	AbilityData_Point       AbilityData_Target = 2 // Requires a target position.
+	AbilityData_Unit        AbilityData_Target = 3 // Requires a unit to target. Given by position using feature layers.
+	AbilityData_PointOrUnit AbilityData_Target = 4 // Requires either a target point or target unit.
+	AbilityData_PointOrNone AbilityData_Target = 5 // Requires either a target point or no target. (eg. building add-ons)
 )
 
 // Enum value maps for AbilityData_Target.
@@ -212,21 +212,21 @@ func (Weapon_TargetType) EnumDescriptor() ([]byte, []int) {
 // Stuff omitted: transient.
 // Stuff that may be important: cost, range, Alignment, targetfilters.
 type AbilityData struct {
-	AbilityId          AbilityID                 `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	LinkName           string                 `protobuf:"bytes,2,opt,name=link_name,json=linkName,proto3" json:"link_name,omitempty"`
-	LinkIndex          uint32                 `protobuf:"varint,3,opt,name=link_index,json=linkIndex,proto3" json:"link_index,omitempty"`
-	ButtonName         string                 `protobuf:"bytes,4,opt,name=button_name,json=buttonName,proto3" json:"button_name,omitempty"`
-	FriendlyName       string                 `protobuf:"bytes,5,opt,name=friendly_name,json=friendlyName,proto3" json:"friendly_name,omitempty"`
-	Hotkey             string                 `protobuf:"bytes,6,opt,name=hotkey,proto3" json:"hotkey,omitempty"`
-	RemapsToAbilityId  AbilityID                 `protobuf:"varint,7,opt,name=remaps_to_ability_id,json=remapsToAbilityId,proto3" json:"remaps_to_ability_id,omitempty"`
-	Available          bool                   `protobuf:"varint,8,opt,name=available,proto3" json:"available,omitempty"`
-	Target             AbilityData_Target     `protobuf:"varint,9,opt,name=target,proto3,enum=SC2APIProtocol.AbilityData_Target" json:"target,omitempty"`
-	AllowMinimap       bool                   `protobuf:"varint,10,opt,name=allow_minimap,json=allowMinimap,proto3" json:"allow_minimap,omitempty"`
-	AllowAutocast      bool                   `protobuf:"varint,11,opt,name=allow_autocast,json=allowAutocast,proto3" json:"allow_autocast,omitempty"`
-	IsBuilding         bool                   `protobuf:"varint,12,opt,name=is_building,json=isBuilding,proto3" json:"is_building,omitempty"`
-	FootprintRadius    float32                `protobuf:"fixed32,13,opt,name=footprint_radius,json=footprintRadius,proto3" json:"footprint_radius,omitempty"`
-	IsInstantPlacement bool                   `protobuf:"varint,14,opt,name=is_instant_placement,json=isInstantPlacement,proto3" json:"is_instant_placement,omitempty"`
-	CastRange          float32                `protobuf:"fixed32,15,opt,name=cast_range,json=castRange,proto3" json:"cast_range,omitempty"`
+	AbilityId          AbilityID                 `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`                               // Stable ID.
+	LinkName           string                 `protobuf:"bytes,2,opt,name=link_name,json=linkName,proto3" json:"link_name,omitempty"`                                   // Catalog name of the ability.
+	LinkIndex          uint32                 `protobuf:"varint,3,opt,name=link_index,json=linkIndex,proto3" json:"link_index,omitempty"`                               // Catalog index of the ability.
+	ButtonName         string                 `protobuf:"bytes,4,opt,name=button_name,json=buttonName,proto3" json:"button_name,omitempty"`                             // Name used for the command card. May not always be set.
+	FriendlyName       string                 `protobuf:"bytes,5,opt,name=friendly_name,json=friendlyName,proto3" json:"friendly_name,omitempty"`                       // A human friendly name when the button name or link name isn't descriptive.
+	Hotkey             string                 `protobuf:"bytes,6,opt,name=hotkey,proto3" json:"hotkey,omitempty"`                                                       // Hotkey. May not always be set.
+	RemapsToAbilityId  AbilityID                 `protobuf:"varint,7,opt,name=remaps_to_ability_id,json=remapsToAbilityId,proto3" json:"remaps_to_ability_id,omitempty"`   // This ability id may be represented by the given more generic id.
+	Available          bool                   `protobuf:"varint,8,opt,name=available,proto3" json:"available,omitempty"`                                                // If true, the ability may be used by this set of mods/map.
+	Target             AbilityData_Target     `protobuf:"varint,9,opt,name=target,proto3,enum=SC2APIProtocol.AbilityData_Target" json:"target,omitempty"`               // Determines if a point is optional or required.
+	AllowMinimap       bool                   `protobuf:"varint,10,opt,name=allow_minimap,json=allowMinimap,proto3" json:"allow_minimap,omitempty"`                     // Can be cast in the minimap.
+	AllowAutocast      bool                   `protobuf:"varint,11,opt,name=allow_autocast,json=allowAutocast,proto3" json:"allow_autocast,omitempty"`                  // Autocast can be set.
+	IsBuilding         bool                   `protobuf:"varint,12,opt,name=is_building,json=isBuilding,proto3" json:"is_building,omitempty"`                           // Requires placement to construct a building.
+	FootprintRadius    float32                `protobuf:"fixed32,13,opt,name=footprint_radius,json=footprintRadius,proto3" json:"footprint_radius,omitempty"`           // Estimation of the footprint size. Need a better footprint.
+	IsInstantPlacement bool                   `protobuf:"varint,14,opt,name=is_instant_placement,json=isInstantPlacement,proto3" json:"is_instant_placement,omitempty"` // Placement next to an existing structure, e.g., an add-on like a Tech Lab.
+	CastRange          float32                `protobuf:"fixed32,15,opt,name=cast_range,json=castRange,proto3" json:"cast_range,omitempty"`                             // Range unit can cast ability without needing to approach target.
 }
 
 func (x *AbilityData) Reset() {
@@ -395,9 +395,9 @@ type Weapon struct {
 	Type          Weapon_TargetType      `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.Weapon_TargetType" json:"type,omitempty"`
 	Damage        float32                `protobuf:"fixed32,2,opt,name=damage,proto3" json:"damage,omitempty"`
 	DamageBonus   []*DamageBonus         `protobuf:"bytes,3,rep,name=damage_bonus,json=damageBonus,proto3" json:"damage_bonus,omitempty"`
-	Attacks       uint32                 `protobuf:"varint,4,opt,name=attacks,proto3" json:"attacks,omitempty"`
+	Attacks       uint32                 `protobuf:"varint,4,opt,name=attacks,proto3" json:"attacks,omitempty"` // Number of hits per attack. (eg. Colossus has 2 beams)
 	Range         float32                `protobuf:"fixed32,5,opt,name=range,proto3" json:"range,omitempty"`
-	Speed         float32                `protobuf:"fixed32,6,opt,name=speed,proto3" json:"speed,omitempty"`
+	Speed         float32                `protobuf:"fixed32,6,opt,name=speed,proto3" json:"speed,omitempty"` // Time between attacks.
 }
 
 func (x *Weapon) Reset() {
@@ -462,28 +462,29 @@ func (x *Weapon) GetSpeed() float32 {
 }
 
 type UnitTypeData struct {
-	UnitId          UnitTypeID                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Available       bool                   `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`
-	CargoSize       uint32                 `protobuf:"varint,4,opt,name=cargo_size,json=cargoSize,proto3" json:"cargo_size,omitempty"`
+	UnitId          UnitTypeID                 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`          // Stable ID.
+	Name            string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`                             // Catalog name of the unit.
+	Available       bool                   `protobuf:"varint,3,opt,name=available,proto3" json:"available,omitempty"`                  // If true, the ability may be used by this set of mods/map.
+	CargoSize       uint32                 `protobuf:"varint,4,opt,name=cargo_size,json=cargoSize,proto3" json:"cargo_size,omitempty"` // Number of cargo slots it occupies in transports.
 	MineralCost     uint32                 `protobuf:"varint,12,opt,name=mineral_cost,json=mineralCost,proto3" json:"mineral_cost,omitempty"`
 	VespeneCost     uint32                 `protobuf:"varint,13,opt,name=vespene_cost,json=vespeneCost,proto3" json:"vespene_cost,omitempty"`
 	FoodRequired    float32                `protobuf:"fixed32,14,opt,name=food_required,json=foodRequired,proto3" json:"food_required,omitempty"`
 	FoodProvided    float32                `protobuf:"fixed32,18,opt,name=food_provided,json=foodProvided,proto3" json:"food_provided,omitempty"`
-	AbilityId       AbilityID                 `protobuf:"varint,15,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	AbilityId       AbilityID                 `protobuf:"varint,15,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"` // The ability that builds this unit.
 	Race            Race                   `protobuf:"varint,16,opt,name=race,proto3,enum=SC2APIProtocol.Race" json:"race,omitempty"`
 	BuildTime       float32                `protobuf:"fixed32,17,opt,name=build_time,json=buildTime,proto3" json:"build_time,omitempty"`
 	HasVespene      bool                   `protobuf:"varint,19,opt,name=has_vespene,json=hasVespene,proto3" json:"has_vespene,omitempty"`
 	HasMinerals     bool                   `protobuf:"varint,20,opt,name=has_minerals,json=hasMinerals,proto3" json:"has_minerals,omitempty"`
-	SightRange      float32                `protobuf:"fixed32,25,opt,name=sight_range,json=sightRange,proto3" json:"sight_range,omitempty"`
-	TechAlias       []UnitTypeID               `protobuf:"varint,21,rep,packed,name=tech_alias,json=techAlias,proto3" json:"tech_alias,omitempty"`
-	UnitAlias       UnitTypeID                 `protobuf:"varint,22,opt,name=unit_alias,json=unitAlias,proto3" json:"unit_alias,omitempty"`
-	TechRequirement UnitTypeID                 `protobuf:"varint,23,opt,name=tech_requirement,json=techRequirement,proto3" json:"tech_requirement,omitempty"`
-	RequireAttached bool                   `protobuf:"varint,24,opt,name=require_attached,json=requireAttached,proto3" json:"require_attached,omitempty"`
-	Attributes      []Attribute            `protobuf:"varint,8,rep,packed,name=attributes,proto3,enum=SC2APIProtocol.Attribute" json:"attributes,omitempty"`
-	MovementSpeed   float32                `protobuf:"fixed32,9,opt,name=movement_speed,json=movementSpeed,proto3" json:"movement_speed,omitempty"`
-	Armor           float32                `protobuf:"fixed32,10,opt,name=armor,proto3" json:"armor,omitempty"`
-	Weapons         []*Weapon              `protobuf:"bytes,11,rep,name=weapons,proto3" json:"weapons,omitempty"`
+	SightRange      float32                `protobuf:"fixed32,25,opt,name=sight_range,json=sightRange,proto3" json:"sight_range,omitempty"`               // Range unit reveals vision.
+	TechAlias       []UnitTypeID               `protobuf:"varint,21,rep,packed,name=tech_alias,json=techAlias,proto3" json:"tech_alias,omitempty"`            // Other units that satisfy the same tech requirement.
+	UnitAlias       UnitTypeID                 `protobuf:"varint,22,opt,name=unit_alias,json=unitAlias,proto3" json:"unit_alias,omitempty"`                   // The morphed variant of this unit.
+	TechRequirement UnitTypeID                 `protobuf:"varint,23,opt,name=tech_requirement,json=techRequirement,proto3" json:"tech_requirement,omitempty"` // Structure required to build this unit. (Or any with the same tech_alias)
+	RequireAttached bool                   `protobuf:"varint,24,opt,name=require_attached,json=requireAttached,proto3" json:"require_attached,omitempty"` // Whether tech_requirement is an add-on.
+	// Values include changes from upgrades
+	Attributes    []Attribute `protobuf:"varint,8,rep,packed,name=attributes,proto3,enum=SC2APIProtocol.Attribute" json:"attributes,omitempty"`
+	MovementSpeed float32     `protobuf:"fixed32,9,opt,name=movement_speed,json=movementSpeed,proto3" json:"movement_speed,omitempty"`
+	Armor         float32     `protobuf:"fixed32,10,opt,name=armor,proto3" json:"armor,omitempty"`
+	Weapons       []*Weapon   `protobuf:"bytes,11,rep,name=weapons,proto3" json:"weapons,omitempty"`
 }
 
 func (x *UnitTypeData) Reset() {
@@ -660,7 +661,7 @@ func (x *UnitTypeData) GetWeapons() []*Weapon {
 }
 
 type UpgradeData struct {
-	UpgradeId     UpgradeID                 `protobuf:"varint,1,opt,name=upgrade_id,json=upgradeId,proto3" json:"upgrade_id,omitempty"`
+	UpgradeId     UpgradeID                 `protobuf:"varint,1,opt,name=upgrade_id,json=upgradeId,proto3" json:"upgrade_id,omitempty"` // Stable ID.
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	MineralCost   uint32                 `protobuf:"varint,3,opt,name=mineral_cost,json=mineralCost,proto3" json:"mineral_cost,omitempty"`
 	VespeneCost   uint32                 `protobuf:"varint,4,opt,name=vespene_cost,json=vespeneCost,proto3" json:"vespene_cost,omitempty"`
@@ -730,7 +731,7 @@ func (x *UpgradeData) GetAbilityId() AbilityID {
 }
 
 type BuffData struct {
-	BuffId        BuffID                 `protobuf:"varint,1,opt,name=buff_id,json=buffId,proto3" json:"buff_id,omitempty"`
+	BuffId        BuffID                 `protobuf:"varint,1,opt,name=buff_id,json=buffId,proto3" json:"buff_id,omitempty"` // Stable ID.
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 }
 
@@ -768,7 +769,7 @@ func (x *BuffData) GetName() string {
 }
 
 type EffectData struct {
-	EffectId      EffectID                 `protobuf:"varint,1,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
+	EffectId      EffectID                 `protobuf:"varint,1,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"` // Stable ID.
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	FriendlyName  string                 `protobuf:"bytes,3,opt,name=friendly_name,json=friendlyName,proto3" json:"friendly_name,omitempty"`
 	Radius        float32                `protobuf:"fixed32,4,opt,name=radius,proto3" json:"radius,omitempty"`

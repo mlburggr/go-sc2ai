@@ -25,7 +25,7 @@ type RequestQuery struct {
 	Pathing                    []*RequestQueryPathing            `protobuf:"bytes,1,rep,name=pathing,proto3" json:"pathing,omitempty"`
 	Abilities                  []*RequestQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities,proto3" json:"abilities,omitempty"`
 	Placements                 []*RequestQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements,proto3" json:"placements,omitempty"`
-	IgnoreResourceRequirements bool                              `protobuf:"varint,4,opt,name=ignore_resource_requirements,json=ignoreResourceRequirements,proto3" json:"ignore_resource_requirements,omitempty"`
+	IgnoreResourceRequirements bool                              `protobuf:"varint,4,opt,name=ignore_resource_requirements,json=ignoreResourceRequirements,proto3" json:"ignore_resource_requirements,omitempty"` // Ignores requirements like food, minerals and so on.
 }
 
 func (x *RequestQuery) Reset() {
@@ -199,7 +199,7 @@ func (*RequestQueryPathing_StartPos) isRequestQueryPathing_Start() {}
 func (*RequestQueryPathing_UnitTag) isRequestQueryPathing_Start() {}
 
 type ResponseQueryPathing struct {
-	Distance      float32                `protobuf:"fixed32,1,opt,name=distance,proto3" json:"distance,omitempty"`
+	Distance      float32                `protobuf:"fixed32,1,opt,name=distance,proto3" json:"distance,omitempty"` // 0 if no path exists
 }
 
 func (x *ResponseQueryPathing) Reset() {
@@ -309,7 +309,7 @@ func (x *ResponseQueryAvailableAbilities) GetUnitTypeId() UnitTypeID {
 type RequestQueryBuildingPlacement struct {
 	AbilityId      AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
 	TargetPos      *Point2D               `protobuf:"bytes,2,opt,name=target_pos,json=targetPos,proto3" json:"target_pos,omitempty"`
-	PlacingUnitTag UnitTag                 `protobuf:"varint,3,opt,name=placing_unit_tag,json=placingUnitTag,proto3" json:"placing_unit_tag,omitempty"`
+	PlacingUnitTag UnitTag                 `protobuf:"varint,3,opt,name=placing_unit_tag,json=placingUnitTag,proto3" json:"placing_unit_tag,omitempty"` // Not required
 }
 
 func (x *RequestQueryBuildingPlacement) Reset() {

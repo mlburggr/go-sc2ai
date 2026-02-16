@@ -115,9 +115,9 @@ func (x *AvailableAbility) GetRequiresPoint() bool {
 }
 
 type ImageData struct {
-	BitsPerPixel  int32                  `protobuf:"varint,1,opt,name=bits_per_pixel,json=bitsPerPixel,proto3" json:"bits_per_pixel,omitempty"`
-	Size          *Size2DI               `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`
-	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	BitsPerPixel  int32                  `protobuf:"varint,1,opt,name=bits_per_pixel,json=bitsPerPixel,proto3" json:"bits_per_pixel,omitempty"` // Number of bits per pixel; 8 bits for a byte etc.
+	Size          *Size2DI               `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`                                        // Dimension in pixels.
+	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`                                        // Binary data; the size of this buffer in bytes is width * height * bits_per_pixel / 8.
 }
 
 func (x *ImageData) Reset() {

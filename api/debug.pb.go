@@ -156,7 +156,7 @@ type DebugEndGame_EndResult int32
 
 const (
 	DebugEndGame_EndResult_nil  DebugEndGame_EndResult = 0
-	DebugEndGame_Surrender      DebugEndGame_EndResult = 1
+	DebugEndGame_Surrender      DebugEndGame_EndResult = 1 // Default if nothing is set. The current player admits defeat.
 	DebugEndGame_DeclareVictory DebugEndGame_EndResult = 2
 )
 
@@ -391,7 +391,7 @@ type DebugCommand_TestProcess struct {
 }
 
 type DebugCommand_Score struct {
-	Score *DebugSetScore `protobuf:"bytes,6,opt,name=score,proto3,oneof"`
+	Score *DebugSetScore `protobuf:"bytes,6,opt,name=score,proto3,oneof"` // Useful only for single-player "curriculum" maps.
 }
 
 type DebugCommand_EndGame struct {
@@ -559,10 +559,10 @@ func (x *Color) GetB() uint32 {
 // Display debug text on screen.
 type DebugText struct {
 	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
-	VirtualPos    *Point                 `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos,proto3" json:"virtual_pos,omitempty"`
-	WorldPos      *Point                 `protobuf:"bytes,4,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`
-	Size          uint32                 `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`
+	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`                               // Text to display.
+	VirtualPos    *Point                 `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos,proto3" json:"virtual_pos,omitempty"` // Virtualized position in 2D (the screen is 0..1, 0..1 for any resolution).
+	WorldPos      *Point                 `protobuf:"bytes,4,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`       // Position in the world.
+	Size          uint32                 `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                              // Pixel height of the text. Defaults to 8px.
 }
 
 func (x *DebugText) Reset() {
@@ -622,7 +622,7 @@ func (x *DebugText) GetSize() uint32 {
 // Display debug lines on screen.
 type DebugLine struct {
 	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	Line          *Line                  `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"`
+	Line          *Line                  `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"` // World space line.
 }
 
 func (x *DebugLine) Reset() {

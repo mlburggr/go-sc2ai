@@ -25,8 +25,8 @@ type Score_ScoreType int32
 
 const (
 	Score_ScoreType_nil Score_ScoreType = 0
-	Score_Curriculum    Score_ScoreType = 1
-	Score_Melee         Score_ScoreType = 2
+	Score_Curriculum    Score_ScoreType = 1 // map generated score (from curriculum maps with special scoring)
+	Score_Melee         Score_ScoreType = 2 // summation of in-progress and current units/buildings value + minerals + vespene
 )
 
 // Enum value maps for Score_ScoreType.
@@ -72,7 +72,7 @@ func (Score_ScoreType) EnumDescriptor() ([]byte, []int) {
 
 type Score struct {
 	ScoreType     Score_ScoreType        `protobuf:"varint,6,opt,name=score_type,json=scoreType,proto3,enum=SC2APIProtocol.Score_ScoreType" json:"score_type,omitempty"`
-	Score         int32                  `protobuf:"varint,7,opt,name=score,proto3" json:"score,omitempty"`
+	Score         int32                  `protobuf:"varint,7,opt,name=score,proto3" json:"score,omitempty"` // Note: check score_type to know whether this is a melee score or curriculum score
 	ScoreDetails  *ScoreDetails          `protobuf:"bytes,8,opt,name=score_details,json=scoreDetails,proto3" json:"score_details,omitempty"`
 }
 
@@ -117,7 +117,7 @@ func (x *Score) GetScoreDetails() *ScoreDetails {
 }
 
 type CategoryScoreDetails struct {
-	None          float32                `protobuf:"fixed32,1,opt,name=none,proto3" json:"none,omitempty"`
+	None          float32                `protobuf:"fixed32,1,opt,name=none,proto3" json:"none,omitempty"` // Used when no other category is configured in game data
 	Army          float32                `protobuf:"fixed32,2,opt,name=army,proto3" json:"army,omitempty"`
 	Economy       float32                `protobuf:"fixed32,3,opt,name=economy,proto3" json:"economy,omitempty"`
 	Technology    float32                `protobuf:"fixed32,4,opt,name=technology,proto3" json:"technology,omitempty"`
@@ -225,34 +225,62 @@ func (x *VitalScoreDetails) GetEnergy() float32 {
 }
 
 type ScoreDetails struct {
-	IdleProductionTime     float32                `protobuf:"fixed32,1,opt,name=idle_production_time,json=idleProductionTime,proto3" json:"idle_production_time,omitempty"`
-	IdleWorkerTime         float32                `protobuf:"fixed32,2,opt,name=idle_worker_time,json=idleWorkerTime,proto3" json:"idle_worker_time,omitempty"`
-	TotalValueUnits        float32                `protobuf:"fixed32,3,opt,name=total_value_units,json=totalValueUnits,proto3" json:"total_value_units,omitempty"`
-	TotalValueStructures   float32                `protobuf:"fixed32,4,opt,name=total_value_structures,json=totalValueStructures,proto3" json:"total_value_structures,omitempty"`
-	KilledValueUnits       float32                `protobuf:"fixed32,5,opt,name=killed_value_units,json=killedValueUnits,proto3" json:"killed_value_units,omitempty"`
-	KilledValueStructures  float32                `protobuf:"fixed32,6,opt,name=killed_value_structures,json=killedValueStructures,proto3" json:"killed_value_structures,omitempty"`
-	CollectedMinerals      float32                `protobuf:"fixed32,7,opt,name=collected_minerals,json=collectedMinerals,proto3" json:"collected_minerals,omitempty"`
-	CollectedVespene       float32                `protobuf:"fixed32,8,opt,name=collected_vespene,json=collectedVespene,proto3" json:"collected_vespene,omitempty"`
-	CollectionRateMinerals float32                `protobuf:"fixed32,9,opt,name=collection_rate_minerals,json=collectionRateMinerals,proto3" json:"collection_rate_minerals,omitempty"`
-	CollectionRateVespene  float32                `protobuf:"fixed32,10,opt,name=collection_rate_vespene,json=collectionRateVespene,proto3" json:"collection_rate_vespene,omitempty"`
-	SpentMinerals          float32                `protobuf:"fixed32,11,opt,name=spent_minerals,json=spentMinerals,proto3" json:"spent_minerals,omitempty"`
-	SpentVespene           float32                `protobuf:"fixed32,12,opt,name=spent_vespene,json=spentVespene,proto3" json:"spent_vespene,omitempty"`
-	FoodUsed               *CategoryScoreDetails  `protobuf:"bytes,13,opt,name=food_used,json=foodUsed,proto3" json:"food_used,omitempty"`
-	KilledMinerals         *CategoryScoreDetails  `protobuf:"bytes,14,opt,name=killed_minerals,json=killedMinerals,proto3" json:"killed_minerals,omitempty"`
-	KilledVespene          *CategoryScoreDetails  `protobuf:"bytes,15,opt,name=killed_vespene,json=killedVespene,proto3" json:"killed_vespene,omitempty"`
-	LostMinerals           *CategoryScoreDetails  `protobuf:"bytes,16,opt,name=lost_minerals,json=lostMinerals,proto3" json:"lost_minerals,omitempty"`
-	LostVespene            *CategoryScoreDetails  `protobuf:"bytes,17,opt,name=lost_vespene,json=lostVespene,proto3" json:"lost_vespene,omitempty"`
-	FriendlyFireMinerals   *CategoryScoreDetails  `protobuf:"bytes,18,opt,name=friendly_fire_minerals,json=friendlyFireMinerals,proto3" json:"friendly_fire_minerals,omitempty"`
-	FriendlyFireVespene    *CategoryScoreDetails  `protobuf:"bytes,19,opt,name=friendly_fire_vespene,json=friendlyFireVespene,proto3" json:"friendly_fire_vespene,omitempty"`
-	UsedMinerals           *CategoryScoreDetails  `protobuf:"bytes,20,opt,name=used_minerals,json=usedMinerals,proto3" json:"used_minerals,omitempty"`
-	UsedVespene            *CategoryScoreDetails  `protobuf:"bytes,21,opt,name=used_vespene,json=usedVespene,proto3" json:"used_vespene,omitempty"`
-	TotalUsedMinerals      *CategoryScoreDetails  `protobuf:"bytes,22,opt,name=total_used_minerals,json=totalUsedMinerals,proto3" json:"total_used_minerals,omitempty"`
-	TotalUsedVespene       *CategoryScoreDetails  `protobuf:"bytes,23,opt,name=total_used_vespene,json=totalUsedVespene,proto3" json:"total_used_vespene,omitempty"`
-	TotalDamageDealt       *VitalScoreDetails     `protobuf:"bytes,24,opt,name=total_damage_dealt,json=totalDamageDealt,proto3" json:"total_damage_dealt,omitempty"`
-	TotalDamageTaken       *VitalScoreDetails     `protobuf:"bytes,25,opt,name=total_damage_taken,json=totalDamageTaken,proto3" json:"total_damage_taken,omitempty"`
-	TotalHealed            *VitalScoreDetails     `protobuf:"bytes,26,opt,name=total_healed,json=totalHealed,proto3" json:"total_healed,omitempty"`
-	CurrentApm             float32                `protobuf:"fixed32,27,opt,name=current_apm,json=currentApm,proto3" json:"current_apm,omitempty"`
-	CurrentEffectiveApm    float32                `protobuf:"fixed32,28,opt,name=current_effective_apm,json=currentEffectiveApm,proto3" json:"current_effective_apm,omitempty"`
+	// Sum of time any available structure able to produce a unit is not. The time stacks, as in, three idle barracks will increase idle_production_time three times quicker than just one.
+	IdleProductionTime float32 `protobuf:"fixed32,1,opt,name=idle_production_time,json=idleProductionTime,proto3" json:"idle_production_time,omitempty"`
+	// Sum of time any worker is not mining. Note a worker building is not idle and three idle workers will increase this value three times quicker than just one.
+	IdleWorkerTime float32 `protobuf:"fixed32,2,opt,name=idle_worker_time,json=idleWorkerTime,proto3" json:"idle_worker_time,omitempty"`
+	// Sum of minerals and vespene spent on completed units.
+	TotalValueUnits float32 `protobuf:"fixed32,3,opt,name=total_value_units,json=totalValueUnits,proto3" json:"total_value_units,omitempty"`
+	// Sum of minerals and vespene spent on completed structures.
+	TotalValueStructures float32 `protobuf:"fixed32,4,opt,name=total_value_structures,json=totalValueStructures,proto3" json:"total_value_structures,omitempty"`
+	// Sum of minerals and vespene of units, belonging to the opponent, that the player has destroyed.
+	KilledValueUnits float32 `protobuf:"fixed32,5,opt,name=killed_value_units,json=killedValueUnits,proto3" json:"killed_value_units,omitempty"`
+	// Sum of minerals and vespene of structures, belonging to the opponent, that the player has destroyed.
+	KilledValueStructures float32 `protobuf:"fixed32,6,opt,name=killed_value_structures,json=killedValueStructures,proto3" json:"killed_value_structures,omitempty"`
+	// Sum of minerals collected by the player.
+	CollectedMinerals float32 `protobuf:"fixed32,7,opt,name=collected_minerals,json=collectedMinerals,proto3" json:"collected_minerals,omitempty"`
+	// Sum of vespene collected by the player.
+	CollectedVespene float32 `protobuf:"fixed32,8,opt,name=collected_vespene,json=collectedVespene,proto3" json:"collected_vespene,omitempty"`
+	// Estimated income of minerals over the next minute based on the players current income. The unit is minerals per minute.
+	CollectionRateMinerals float32 `protobuf:"fixed32,9,opt,name=collection_rate_minerals,json=collectionRateMinerals,proto3" json:"collection_rate_minerals,omitempty"`
+	// Estimated income of vespene over the next minute based on the players current income. The unit is vespene per minute.
+	CollectionRateVespene float32 `protobuf:"fixed32,10,opt,name=collection_rate_vespene,json=collectionRateVespene,proto3" json:"collection_rate_vespene,omitempty"`
+	// Sum of spent minerals at the moment it is spent. For example, this number is incremented by 50 the moment an scv is queued in a command center.  It is decremented by 50 if that unit is canceled.
+	SpentMinerals float32 `protobuf:"fixed32,11,opt,name=spent_minerals,json=spentMinerals,proto3" json:"spent_minerals,omitempty"`
+	// Sum of spent vespene at the moment it is spent. For example, this number is incremented by 50 when a reaper is queued but decremented by 50 if it is canceled.
+	SpentVespene float32 `protobuf:"fixed32,12,opt,name=spent_vespene,json=spentVespene,proto3" json:"spent_vespene,omitempty"`
+	// Sum of food, or supply, utilized in the categories above.
+	FoodUsed *CategoryScoreDetails `protobuf:"bytes,13,opt,name=food_used,json=foodUsed,proto3" json:"food_used,omitempty"`
+	// Sum of enemies catagories destroyed in minerals.
+	KilledMinerals *CategoryScoreDetails `protobuf:"bytes,14,opt,name=killed_minerals,json=killedMinerals,proto3" json:"killed_minerals,omitempty"`
+	// Sum of enemies catagories destroyed in vespene.
+	KilledVespene *CategoryScoreDetails `protobuf:"bytes,15,opt,name=killed_vespene,json=killedVespene,proto3" json:"killed_vespene,omitempty"`
+	// Sum of lost minerals for the player in each category.
+	LostMinerals *CategoryScoreDetails `protobuf:"bytes,16,opt,name=lost_minerals,json=lostMinerals,proto3" json:"lost_minerals,omitempty"`
+	// Sum of lost vespene for the player in each category.
+	LostVespene *CategoryScoreDetails `protobuf:"bytes,17,opt,name=lost_vespene,json=lostVespene,proto3" json:"lost_vespene,omitempty"`
+	// Sum of the lost minerals via destroying the players own units/buildings.
+	FriendlyFireMinerals *CategoryScoreDetails `protobuf:"bytes,18,opt,name=friendly_fire_minerals,json=friendlyFireMinerals,proto3" json:"friendly_fire_minerals,omitempty"`
+	// Sum of the lost vespene via destroying the players own units/buildings.
+	FriendlyFireVespene *CategoryScoreDetails `protobuf:"bytes,19,opt,name=friendly_fire_vespene,json=friendlyFireVespene,proto3" json:"friendly_fire_vespene,omitempty"`
+	// Sum of used minerals for the player in each category for each existing unit or upgrade. Therefore if a unit died worth 50 mierals this number will be decremented by 50.
+	UsedMinerals *CategoryScoreDetails `protobuf:"bytes,20,opt,name=used_minerals,json=usedMinerals,proto3" json:"used_minerals,omitempty"`
+	// Sum of used vespene for the player in each category. Therefore if a unit died worth 50 vespene this number will be decremented by 50.
+	UsedVespene *CategoryScoreDetails `protobuf:"bytes,21,opt,name=used_vespene,json=usedVespene,proto3" json:"used_vespene,omitempty"`
+	// Sum of used minerals throughout the entire game for each category. Unliked used_minerals, this value is never decremented.
+	TotalUsedMinerals *CategoryScoreDetails `protobuf:"bytes,22,opt,name=total_used_minerals,json=totalUsedMinerals,proto3" json:"total_used_minerals,omitempty"`
+	// Sum of used vespene throughout the entire game for each category. Unliked used_vespene, this value is never decremented.
+	TotalUsedVespene *CategoryScoreDetails `protobuf:"bytes,23,opt,name=total_used_vespene,json=totalUsedVespene,proto3" json:"total_used_vespene,omitempty"`
+	// Sum of damage dealt to the player's opponent for each category.
+	TotalDamageDealt *VitalScoreDetails `protobuf:"bytes,24,opt,name=total_damage_dealt,json=totalDamageDealt,proto3" json:"total_damage_dealt,omitempty"`
+	// Sum of damage taken by the player for each category.
+	TotalDamageTaken *VitalScoreDetails `protobuf:"bytes,25,opt,name=total_damage_taken,json=totalDamageTaken,proto3" json:"total_damage_taken,omitempty"`
+	// Sum of health healed by the player. Note that technology can be healed (by queens) or repaired (by scvs).
+	TotalHealed *VitalScoreDetails `protobuf:"bytes,26,opt,name=total_healed,json=totalHealed,proto3" json:"total_healed,omitempty"`
+	// Recent raw APM.
+	CurrentApm float32 `protobuf:"fixed32,27,opt,name=current_apm,json=currentApm,proto3" json:"current_apm,omitempty"`
+	// Recent effective APM.
+	CurrentEffectiveApm float32 `protobuf:"fixed32,28,opt,name=current_effective_apm,json=currentEffectiveApm,proto3" json:"current_effective_apm,omitempty"`
 }
 
 func (x *ScoreDetails) Reset() {

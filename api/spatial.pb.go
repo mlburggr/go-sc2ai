@@ -25,10 +25,10 @@ type ActionSpatialUnitSelectionPoint_Type int32
 
 const (
 	ActionSpatialUnitSelectionPoint_Type_nil   ActionSpatialUnitSelectionPoint_Type = 0
-	ActionSpatialUnitSelectionPoint_Select     ActionSpatialUnitSelectionPoint_Type = 1
-	ActionSpatialUnitSelectionPoint_Toggle     ActionSpatialUnitSelectionPoint_Type = 2
-	ActionSpatialUnitSelectionPoint_AllType    ActionSpatialUnitSelectionPoint_Type = 3
-	ActionSpatialUnitSelectionPoint_AddAllType ActionSpatialUnitSelectionPoint_Type = 4
+	ActionSpatialUnitSelectionPoint_Select     ActionSpatialUnitSelectionPoint_Type = 1 // Equivalent to normal click. Changes selection to unit.
+	ActionSpatialUnitSelectionPoint_Toggle     ActionSpatialUnitSelectionPoint_Type = 2 // Equivalent to shift+click. Toggle selection of unit.
+	ActionSpatialUnitSelectionPoint_AllType    ActionSpatialUnitSelectionPoint_Type = 3 // Equivalent to control+click. Selects all units of a given type.
+	ActionSpatialUnitSelectionPoint_AddAllType ActionSpatialUnitSelectionPoint_Type = 4 // Equivalent to shift+control+click. Selects all units of a given type.
 )
 
 // Enum value maps for ActionSpatialUnitSelectionPoint_Type.
@@ -115,33 +115,33 @@ func (x *ObservationFeatureLayer) GetMinimapRenders() *FeatureLayersMinimap {
 }
 
 type FeatureLayers struct {
-	HeightMap          *ImageData             `protobuf:"bytes,1,opt,name=height_map,json=heightMap,proto3" json:"height_map,omitempty"`
-	VisibilityMap      *ImageData             `protobuf:"bytes,2,opt,name=visibility_map,json=visibilityMap,proto3" json:"visibility_map,omitempty"`
-	Creep              *ImageData             `protobuf:"bytes,3,opt,name=creep,proto3" json:"creep,omitempty"`
-	Power              *ImageData             `protobuf:"bytes,4,opt,name=power,proto3" json:"power,omitempty"`
-	PlayerId           *ImageData             `protobuf:"bytes,5,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	UnitType           *ImageData             `protobuf:"bytes,6,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	Selected           *ImageData             `protobuf:"bytes,7,opt,name=selected,proto3" json:"selected,omitempty"`
-	UnitHitPoints      *ImageData             `protobuf:"bytes,8,opt,name=unit_hit_points,json=unitHitPoints,proto3" json:"unit_hit_points,omitempty"`
-	UnitHitPointsRatio *ImageData             `protobuf:"bytes,17,opt,name=unit_hit_points_ratio,json=unitHitPointsRatio,proto3" json:"unit_hit_points_ratio,omitempty"`
-	UnitEnergy         *ImageData             `protobuf:"bytes,9,opt,name=unit_energy,json=unitEnergy,proto3" json:"unit_energy,omitempty"`
-	UnitEnergyRatio    *ImageData             `protobuf:"bytes,18,opt,name=unit_energy_ratio,json=unitEnergyRatio,proto3" json:"unit_energy_ratio,omitempty"`
-	UnitShields        *ImageData             `protobuf:"bytes,10,opt,name=unit_shields,json=unitShields,proto3" json:"unit_shields,omitempty"`
-	UnitShieldsRatio   *ImageData             `protobuf:"bytes,19,opt,name=unit_shields_ratio,json=unitShieldsRatio,proto3" json:"unit_shields_ratio,omitempty"`
-	PlayerRelative     *ImageData             `protobuf:"bytes,11,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
-	UnitDensityAa      *ImageData             `protobuf:"bytes,14,opt,name=unit_density_aa,json=unitDensityAa,proto3" json:"unit_density_aa,omitempty"`
-	UnitDensity        *ImageData             `protobuf:"bytes,15,opt,name=unit_density,json=unitDensity,proto3" json:"unit_density,omitempty"`
-	Effects            *ImageData             `protobuf:"bytes,20,opt,name=effects,proto3" json:"effects,omitempty"`
-	Hallucinations     *ImageData             `protobuf:"bytes,21,opt,name=hallucinations,proto3" json:"hallucinations,omitempty"`
-	Cloaked            *ImageData             `protobuf:"bytes,22,opt,name=cloaked,proto3" json:"cloaked,omitempty"`
-	Blip               *ImageData             `protobuf:"bytes,23,opt,name=blip,proto3" json:"blip,omitempty"`
-	Buffs              *ImageData             `protobuf:"bytes,24,opt,name=buffs,proto3" json:"buffs,omitempty"`
-	BuffDuration       *ImageData             `protobuf:"bytes,26,opt,name=buff_duration,json=buffDuration,proto3" json:"buff_duration,omitempty"`
-	Active             *ImageData             `protobuf:"bytes,25,opt,name=active,proto3" json:"active,omitempty"`
-	BuildProgress      *ImageData             `protobuf:"bytes,27,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`
-	Buildable          *ImageData             `protobuf:"bytes,28,opt,name=buildable,proto3" json:"buildable,omitempty"`
-	Pathable           *ImageData             `protobuf:"bytes,29,opt,name=pathable,proto3" json:"pathable,omitempty"`
-	Placeholder        *ImageData             `protobuf:"bytes,30,opt,name=placeholder,proto3" json:"placeholder,omitempty"`
+	HeightMap          *ImageData             `protobuf:"bytes,1,opt,name=height_map,json=heightMap,proto3" json:"height_map,omitempty"`                                 // uint8. Terrain height. World space units of [-200, 200] encoded into [0, 255].
+	VisibilityMap      *ImageData             `protobuf:"bytes,2,opt,name=visibility_map,json=visibilityMap,proto3" json:"visibility_map,omitempty"`                     // uint8. 0=Hidden, 1=Fogged, 2=Visible, 3=FullHidden
+	Creep              *ImageData             `protobuf:"bytes,3,opt,name=creep,proto3" json:"creep,omitempty"`                                                          // 1-bit. Zerg creep.
+	Power              *ImageData             `protobuf:"bytes,4,opt,name=power,proto3" json:"power,omitempty"`                                                          // 1-bit. Protoss power.
+	PlayerId           *ImageData             `protobuf:"bytes,5,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`                                    // uint8. Participants: [1, 15] Neutral: 16
+	UnitType           *ImageData             `protobuf:"bytes,6,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`                                    // int32. Unique identifier for type of unit.
+	Selected           *ImageData             `protobuf:"bytes,7,opt,name=selected,proto3" json:"selected,omitempty"`                                                    // 1-bit. Selected units.
+	UnitHitPoints      *ImageData             `protobuf:"bytes,8,opt,name=unit_hit_points,json=unitHitPoints,proto3" json:"unit_hit_points,omitempty"`                   // int32.
+	UnitHitPointsRatio *ImageData             `protobuf:"bytes,17,opt,name=unit_hit_points_ratio,json=unitHitPointsRatio,proto3" json:"unit_hit_points_ratio,omitempty"` // uint8. Ratio of current health to max health. [0%, 100%] encoded into [0, 255].
+	UnitEnergy         *ImageData             `protobuf:"bytes,9,opt,name=unit_energy,json=unitEnergy,proto3" json:"unit_energy,omitempty"`                              // int32.
+	UnitEnergyRatio    *ImageData             `protobuf:"bytes,18,opt,name=unit_energy_ratio,json=unitEnergyRatio,proto3" json:"unit_energy_ratio,omitempty"`            // uint8. Ratio of current energy to max energy. [0%, 100%] encoded into [0, 255].
+	UnitShields        *ImageData             `protobuf:"bytes,10,opt,name=unit_shields,json=unitShields,proto3" json:"unit_shields,omitempty"`                          // int32.
+	UnitShieldsRatio   *ImageData             `protobuf:"bytes,19,opt,name=unit_shields_ratio,json=unitShieldsRatio,proto3" json:"unit_shields_ratio,omitempty"`         // uint8. Ratio of current shields to max shields. [0%, 100%] encoded into [0, 255].
+	PlayerRelative     *ImageData             `protobuf:"bytes,11,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`                 // uint8. See "Alliance" enum in raw.proto. Range: [1, 4]
+	UnitDensityAa      *ImageData             `protobuf:"bytes,14,opt,name=unit_density_aa,json=unitDensityAa,proto3" json:"unit_density_aa,omitempty"`                  // uint8. Density of units overlapping a pixel, anti-aliased. [0.0, 16.0f] encoded into [0, 255].
+	UnitDensity        *ImageData             `protobuf:"bytes,15,opt,name=unit_density,json=unitDensity,proto3" json:"unit_density,omitempty"`                          // uint8. Count of units overlapping a pixel.
+	Effects            *ImageData             `protobuf:"bytes,20,opt,name=effects,proto3" json:"effects,omitempty"`                                                     // uint8. Visuals of persistent abilities. (eg. Psistorm)
+	Hallucinations     *ImageData             `protobuf:"bytes,21,opt,name=hallucinations,proto3" json:"hallucinations,omitempty"`                                       // 1-bit. Whether the unit here is a hallucination.
+	Cloaked            *ImageData             `protobuf:"bytes,22,opt,name=cloaked,proto3" json:"cloaked,omitempty"`                                                     // 1-bit. Whether the unit here is cloaked. Hidden units will show up too, but with less details in other layers.
+	Blip               *ImageData             `protobuf:"bytes,23,opt,name=blip,proto3" json:"blip,omitempty"`                                                           // 1-bit. Whether the unit here is a blip.
+	Buffs              *ImageData             `protobuf:"bytes,24,opt,name=buffs,proto3" json:"buffs,omitempty"`                                                         // int32. One of the buffs applied to this unit. Extras are ignored.
+	BuffDuration       *ImageData             `protobuf:"bytes,26,opt,name=buff_duration,json=buffDuration,proto3" json:"buff_duration,omitempty"`                       // uint8. Ratio of buff remaining. [0%, 100%] encoded into [0, 255].
+	Active             *ImageData             `protobuf:"bytes,25,opt,name=active,proto3" json:"active,omitempty"`                                                       // 1-bit. Whether the unit here is active.
+	BuildProgress      *ImageData             `protobuf:"bytes,27,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`                    // uint8. How far along the building is building something. [0%, 100%] encoded into [0, 255].
+	Buildable          *ImageData             `protobuf:"bytes,28,opt,name=buildable,proto3" json:"buildable,omitempty"`                                                 // 1-bit. Whether a building can be built here.
+	Pathable           *ImageData             `protobuf:"bytes,29,opt,name=pathable,proto3" json:"pathable,omitempty"`                                                   // 1-bit. Whether a unit can walk here.
+	Placeholder        *ImageData             `protobuf:"bytes,30,opt,name=placeholder,proto3" json:"placeholder,omitempty"`                                             // 1-bit. Whether the unit here is a placeholder building to be constructed.
 }
 
 func (x *FeatureLayers) Reset() {
@@ -353,17 +353,18 @@ func (x *FeatureLayers) GetPlaceholder() *ImageData {
 }
 
 type FeatureLayersMinimap struct {
-	HeightMap      *ImageData             `protobuf:"bytes,1,opt,name=height_map,json=heightMap,proto3" json:"height_map,omitempty"`
-	VisibilityMap  *ImageData             `protobuf:"bytes,2,opt,name=visibility_map,json=visibilityMap,proto3" json:"visibility_map,omitempty"`
-	Creep          *ImageData             `protobuf:"bytes,3,opt,name=creep,proto3" json:"creep,omitempty"`
-	Camera         *ImageData             `protobuf:"bytes,4,opt,name=camera,proto3" json:"camera,omitempty"`
-	PlayerId       *ImageData             `protobuf:"bytes,5,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	PlayerRelative *ImageData             `protobuf:"bytes,6,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
-	Selected       *ImageData             `protobuf:"bytes,7,opt,name=selected,proto3" json:"selected,omitempty"`
-	Alerts         *ImageData             `protobuf:"bytes,9,opt,name=alerts,proto3" json:"alerts,omitempty"`
-	Buildable      *ImageData             `protobuf:"bytes,10,opt,name=buildable,proto3" json:"buildable,omitempty"`
-	Pathable       *ImageData             `protobuf:"bytes,11,opt,name=pathable,proto3" json:"pathable,omitempty"`
-	UnitType       *ImageData             `protobuf:"bytes,8,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	HeightMap      *ImageData             `protobuf:"bytes,1,opt,name=height_map,json=heightMap,proto3" json:"height_map,omitempty"`                // uint8. Terrain height. World space units of [-200, 200] encoded into [0, 255].
+	VisibilityMap  *ImageData             `protobuf:"bytes,2,opt,name=visibility_map,json=visibilityMap,proto3" json:"visibility_map,omitempty"`    // uint8. 0=Hidden, 1=Fogged, 2=Visible, 3=FullHidden
+	Creep          *ImageData             `protobuf:"bytes,3,opt,name=creep,proto3" json:"creep,omitempty"`                                         // 1-bit. Zerg creep.
+	Camera         *ImageData             `protobuf:"bytes,4,opt,name=camera,proto3" json:"camera,omitempty"`                                       // 1-bit. Area covered by the camera.
+	PlayerId       *ImageData             `protobuf:"bytes,5,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`                   // uint8. Participants: [1, 15] Neutral: 16
+	PlayerRelative *ImageData             `protobuf:"bytes,6,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"` // uint8. See "Alliance" enum in raw.proto. Range: [1, 4]
+	Selected       *ImageData             `protobuf:"bytes,7,opt,name=selected,proto3" json:"selected,omitempty"`                                   // 1-bit. Selected units.
+	Alerts         *ImageData             `protobuf:"bytes,9,opt,name=alerts,proto3" json:"alerts,omitempty"`                                       // 1-bit. Shows 'UnitAttacked' alert location.
+	Buildable      *ImageData             `protobuf:"bytes,10,opt,name=buildable,proto3" json:"buildable,omitempty"`                                // 1-bit. Whether a building can be built here.
+	Pathable       *ImageData             `protobuf:"bytes,11,opt,name=pathable,proto3" json:"pathable,omitempty"`                                  // 1-bit. Whether a unit can walk here.
+	// Cheat layers, enable with SpatialCameraSetup.allow_cheating_layers.
+	UnitType      *ImageData `protobuf:"bytes,8,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"` // int32. Unique identifier for type of unit.
 }
 
 func (x *FeatureLayersMinimap) Reset() {
@@ -607,7 +608,7 @@ type ActionSpatialUnitCommand struct {
 	//	*ActionSpatialUnitCommand_TargetScreenCoord
 	//	*ActionSpatialUnitCommand_TargetMinimapCoord
 	Target        isActionSpatialUnitCommand_Target `protobuf_oneof:"target"`
-	QueueCommand  bool                              `protobuf:"varint,4,opt,name=queue_command,json=queueCommand,proto3" json:"queue_command,omitempty"`
+	QueueCommand  bool                              `protobuf:"varint,4,opt,name=queue_command,json=queueCommand,proto3" json:"queue_command,omitempty"` // Equivalent to shift+command.
 }
 
 func (x *ActionSpatialUnitCommand) Reset() {
@@ -685,7 +686,7 @@ func (*ActionSpatialUnitCommand_TargetScreenCoord) isActionSpatialUnitCommand_Ta
 func (*ActionSpatialUnitCommand_TargetMinimapCoord) isActionSpatialUnitCommand_Target() {}
 
 type ActionSpatialCameraMove struct {
-	CenterMinimap *PointI                `protobuf:"bytes,1,opt,name=center_minimap,json=centerMinimap,proto3" json:"center_minimap,omitempty"`
+	CenterMinimap *PointI                `protobuf:"bytes,1,opt,name=center_minimap,json=centerMinimap,proto3" json:"center_minimap,omitempty"` // Simulates a click on the minimap to move the camera.
 }
 
 func (x *ActionSpatialCameraMove) Reset() {
@@ -753,8 +754,8 @@ func (x *ActionSpatialUnitSelectionPoint) GetType() ActionSpatialUnitSelectionPo
 }
 
 type ActionSpatialUnitSelectionRect struct {
-	SelectionScreenCoord []*RectangleI          `protobuf:"bytes,1,rep,name=selection_screen_coord,json=selectionScreenCoord,proto3" json:"selection_screen_coord,omitempty"`
-	SelectionAdd         bool                   `protobuf:"varint,2,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`
+	SelectionScreenCoord []*RectangleI          `protobuf:"bytes,1,rep,name=selection_screen_coord,json=selectionScreenCoord,proto3" json:"selection_screen_coord,omitempty"` // Eventually this should not be an array, but a single field (multiple would be cheating).
+	SelectionAdd         bool                   `protobuf:"varint,2,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`                          // Equivalent to shift+drag. Adds units to selection.
 }
 
 func (x *ActionSpatialUnitSelectionRect) Reset() {

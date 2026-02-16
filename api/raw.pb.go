@@ -25,10 +25,10 @@ type DisplayType int32
 
 const (
 	DisplayType_nil DisplayType = 0
-	DisplayType_Visible         DisplayType = 1
-	DisplayType_Snapshot        DisplayType = 2
-	DisplayType_Hidden          DisplayType = 3
-	DisplayType_Placeholder     DisplayType = 4
+	DisplayType_Visible         DisplayType = 1 // Fully visible
+	DisplayType_Snapshot        DisplayType = 2 // Dimmed version of unit left behind after entering fog of war
+	DisplayType_Hidden          DisplayType = 3 // Fully hidden
+	DisplayType_Placeholder     DisplayType = 4 // Building that hasn't started construction.
 )
 
 // Enum value maps for DisplayType.
@@ -134,7 +134,7 @@ func (Alliance) EnumDescriptor() ([]byte, []int) {
 type CloakState int32
 
 const (
-	CloakState_CloakedUnknown  CloakState = 0
+	CloakState_CloakedUnknown  CloakState = 0 // Under the fog, so unknown whether it's cloaked or not.
 	CloakState_Cloaked         CloakState = 1
 	CloakState_CloakedDetected CloakState = 2
 	CloakState_NotCloaked      CloakState = 3
@@ -187,12 +187,12 @@ func (CloakState) EnumDescriptor() ([]byte, []int) {
 }
 
 type StartRaw struct {
-	MapSize        *Size2DI               `protobuf:"bytes,1,opt,name=map_size,json=mapSize,proto3" json:"map_size,omitempty"`
-	PathingGrid    *ImageData             `protobuf:"bytes,2,opt,name=pathing_grid,json=pathingGrid,proto3" json:"pathing_grid,omitempty"`
-	TerrainHeight  *ImageData             `protobuf:"bytes,3,opt,name=terrain_height,json=terrainHeight,proto3" json:"terrain_height,omitempty"`
-	PlacementGrid  *ImageData             `protobuf:"bytes,4,opt,name=placement_grid,json=placementGrid,proto3" json:"placement_grid,omitempty"`
-	PlayableArea   *RectangleI            `protobuf:"bytes,5,opt,name=playable_area,json=playableArea,proto3" json:"playable_area,omitempty"`
-	StartLocations []*Point2D             `protobuf:"bytes,6,rep,name=start_locations,json=startLocations,proto3" json:"start_locations,omitempty"`
+	MapSize        *Size2DI               `protobuf:"bytes,1,opt,name=map_size,json=mapSize,proto3" json:"map_size,omitempty"`                      // Width and height of the map.
+	PathingGrid    *ImageData             `protobuf:"bytes,2,opt,name=pathing_grid,json=pathingGrid,proto3" json:"pathing_grid,omitempty"`          // 1 bit bitmap of the pathing grid.
+	TerrainHeight  *ImageData             `protobuf:"bytes,3,opt,name=terrain_height,json=terrainHeight,proto3" json:"terrain_height,omitempty"`    // 1 byte bitmap of the terrain height.
+	PlacementGrid  *ImageData             `protobuf:"bytes,4,opt,name=placement_grid,json=placementGrid,proto3" json:"placement_grid,omitempty"`    // 1 bit bitmap of the building placement grid.
+	PlayableArea   *RectangleI            `protobuf:"bytes,5,opt,name=playable_area,json=playableArea,proto3" json:"playable_area,omitempty"`       // The playable cells.
+	StartLocations []*Point2D             `protobuf:"bytes,6,rep,name=start_locations,json=startLocations,proto3" json:"start_locations,omitempty"` // Possible start locations for players.
 }
 
 func (x *StartRaw) Reset() {
@@ -259,7 +259,7 @@ func (x *StartRaw) GetStartLocations() []*Point2D {
 type ObservationRaw struct {
 	Player        *PlayerRaw             `protobuf:"bytes,1,opt,name=player,proto3" json:"player,omitempty"`
 	Units         []*Unit                `protobuf:"bytes,2,rep,name=units,proto3" json:"units,omitempty"`
-	MapState      *MapState              `protobuf:"bytes,3,opt,name=map_state,json=mapState,proto3" json:"map_state,omitempty"`
+	MapState      *MapState              `protobuf:"bytes,3,opt,name=map_state,json=mapState,proto3" json:"map_state,omitempty"` // Fog of war, creep and so on. Board stuff that changes per frame.
 	Event         *Event                 `protobuf:"bytes,4,opt,name=event,proto3" json:"event,omitempty"`
 	Effects       []*Effect              `protobuf:"bytes,5,rep,name=effects,proto3" json:"effects,omitempty"`
 	Radar         []*RadarRing           `protobuf:"bytes,6,rep,name=radar,proto3" json:"radar,omitempty"`
@@ -413,7 +413,7 @@ func (x *PowerSource) GetTag() UnitTag {
 type PlayerRaw struct {
 	PowerSources  []*PowerSource         `protobuf:"bytes,1,rep,name=power_sources,json=powerSources,proto3" json:"power_sources,omitempty"`
 	Camera        *Point                 `protobuf:"bytes,2,opt,name=camera,proto3" json:"camera,omitempty"`
-	UpgradeIds    []UpgradeID               `protobuf:"varint,3,rep,packed,name=upgrade_ids,json=upgradeIds,proto3" json:"upgrade_ids,omitempty"`
+	UpgradeIds    []UpgradeID               `protobuf:"varint,3,rep,packed,name=upgrade_ids,json=upgradeIds,proto3" json:"upgrade_ids,omitempty"` // TODO: Add to UI observation?
 }
 
 func (x *PlayerRaw) Reset() {
@@ -463,7 +463,7 @@ type UnitOrder struct {
 	//	*UnitOrder_TargetWorldSpacePos
 	//	*UnitOrder_TargetUnitTag
 	Target        isUnitOrder_Target `protobuf_oneof:"target"`
-	Progress      float32            `protobuf:"fixed32,4,opt,name=progress,proto3" json:"progress,omitempty"`
+	Progress      float32            `protobuf:"fixed32,4,opt,name=progress,proto3" json:"progress,omitempty"` // Progress of train abilities. Range: [0.0, 1.0]
 }
 
 func (x *UnitOrder) Reset() {
@@ -627,8 +627,8 @@ func (x *PassengerUnit) GetUnitType() UnitTypeID {
 }
 
 type RallyTarget struct {
-	Point         *Point                 `protobuf:"bytes,1,opt,name=point,proto3" json:"point,omitempty"`
-	Tag           UnitTag                 `protobuf:"varint,2,opt,name=tag,proto3" json:"tag,omitempty"`
+	Point         *Point                 `protobuf:"bytes,1,opt,name=point,proto3" json:"point,omitempty"` // Will always be filled.
+	Tag           UnitTag                 `protobuf:"varint,2,opt,name=tag,proto3" json:"tag,omitempty"`    // Only if it's targeting a unit.
 }
 
 func (x *RallyTarget) Reset() {
@@ -665,51 +665,54 @@ func (x *RallyTarget) GetTag() UnitTag {
 }
 
 type Unit struct {
-	DisplayType        DisplayType            `protobuf:"varint,1,opt,name=display_type,json=displayType,proto3,enum=SC2APIProtocol.DisplayType" json:"display_type,omitempty"`
-	Alliance           Alliance               `protobuf:"varint,2,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
-	Tag                UnitTag                 `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"`
-	UnitType           UnitTypeID                 `protobuf:"varint,4,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	Owner              PlayerID                  `protobuf:"varint,5,opt,name=owner,proto3" json:"owner,omitempty"`
-	Pos                *Point                 `protobuf:"bytes,6,opt,name=pos,proto3" json:"pos,omitempty"`
-	Facing             float32                `protobuf:"fixed32,7,opt,name=facing,proto3" json:"facing,omitempty"`
-	Radius             float32                `protobuf:"fixed32,8,opt,name=radius,proto3" json:"radius,omitempty"`
-	BuildProgress      float32                `protobuf:"fixed32,9,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`
-	Cloak              CloakState             `protobuf:"varint,10,opt,name=cloak,proto3,enum=SC2APIProtocol.CloakState" json:"cloak,omitempty"`
-	BuffIds            []BuffID               `protobuf:"varint,27,rep,packed,name=buff_ids,json=buffIds,proto3" json:"buff_ids,omitempty"`
-	DetectRange        float32                `protobuf:"fixed32,31,opt,name=detect_range,json=detectRange,proto3" json:"detect_range,omitempty"`
-	RadarRange         float32                `protobuf:"fixed32,32,opt,name=radar_range,json=radarRange,proto3" json:"radar_range,omitempty"`
-	IsSelected         bool                   `protobuf:"varint,11,opt,name=is_selected,json=isSelected,proto3" json:"is_selected,omitempty"`
-	IsOnScreen         bool                   `protobuf:"varint,12,opt,name=is_on_screen,json=isOnScreen,proto3" json:"is_on_screen,omitempty"`
-	IsBlip             bool                   `protobuf:"varint,13,opt,name=is_blip,json=isBlip,proto3" json:"is_blip,omitempty"`
-	IsPowered          bool                   `protobuf:"varint,35,opt,name=is_powered,json=isPowered,proto3" json:"is_powered,omitempty"`
-	IsActive           bool                   `protobuf:"varint,39,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"`
-	AttackUpgradeLevel int32                  `protobuf:"varint,40,opt,name=attack_upgrade_level,json=attackUpgradeLevel,proto3" json:"attack_upgrade_level,omitempty"`
-	ArmorUpgradeLevel  int32                  `protobuf:"varint,41,opt,name=armor_upgrade_level,json=armorUpgradeLevel,proto3" json:"armor_upgrade_level,omitempty"`
-	ShieldUpgradeLevel int32                  `protobuf:"varint,42,opt,name=shield_upgrade_level,json=shieldUpgradeLevel,proto3" json:"shield_upgrade_level,omitempty"`
-	Health             float32                `protobuf:"fixed32,14,opt,name=health,proto3" json:"health,omitempty"`
-	HealthMax          float32                `protobuf:"fixed32,15,opt,name=health_max,json=healthMax,proto3" json:"health_max,omitempty"`
-	Shield             float32                `protobuf:"fixed32,16,opt,name=shield,proto3" json:"shield,omitempty"`
-	ShieldMax          float32                `protobuf:"fixed32,36,opt,name=shield_max,json=shieldMax,proto3" json:"shield_max,omitempty"`
-	Energy             float32                `protobuf:"fixed32,17,opt,name=energy,proto3" json:"energy,omitempty"`
-	EnergyMax          float32                `protobuf:"fixed32,37,opt,name=energy_max,json=energyMax,proto3" json:"energy_max,omitempty"`
-	MineralContents    int32                  `protobuf:"varint,18,opt,name=mineral_contents,json=mineralContents,proto3" json:"mineral_contents,omitempty"`
-	VespeneContents    int32                  `protobuf:"varint,19,opt,name=vespene_contents,json=vespeneContents,proto3" json:"vespene_contents,omitempty"`
-	IsFlying           bool                   `protobuf:"varint,20,opt,name=is_flying,json=isFlying,proto3" json:"is_flying,omitempty"`
-	IsBurrowed         bool                   `protobuf:"varint,21,opt,name=is_burrowed,json=isBurrowed,proto3" json:"is_burrowed,omitempty"`
-	IsHallucination    bool                   `protobuf:"varint,38,opt,name=is_hallucination,json=isHallucination,proto3" json:"is_hallucination,omitempty"`
-	Orders             []*UnitOrder           `protobuf:"bytes,22,rep,name=orders,proto3" json:"orders,omitempty"`
-	AddOnTag           UnitTag                 `protobuf:"varint,23,opt,name=add_on_tag,json=addOnTag,proto3" json:"add_on_tag,omitempty"`
-	Passengers         []*PassengerUnit       `protobuf:"bytes,24,rep,name=passengers,proto3" json:"passengers,omitempty"`
-	CargoSpaceTaken    int32                  `protobuf:"varint,25,opt,name=cargo_space_taken,json=cargoSpaceTaken,proto3" json:"cargo_space_taken,omitempty"`
-	CargoSpaceMax      int32                  `protobuf:"varint,26,opt,name=cargo_space_max,json=cargoSpaceMax,proto3" json:"cargo_space_max,omitempty"`
-	AssignedHarvesters int32                  `protobuf:"varint,28,opt,name=assigned_harvesters,json=assignedHarvesters,proto3" json:"assigned_harvesters,omitempty"`
-	IdealHarvesters    int32                  `protobuf:"varint,29,opt,name=ideal_harvesters,json=idealHarvesters,proto3" json:"ideal_harvesters,omitempty"`
-	WeaponCooldown     float32                `protobuf:"fixed32,30,opt,name=weapon_cooldown,json=weaponCooldown,proto3" json:"weapon_cooldown,omitempty"`
-	EngagedTargetTag   UnitTag                 `protobuf:"varint,34,opt,name=engaged_target_tag,json=engagedTargetTag,proto3" json:"engaged_target_tag,omitempty"`
-	BuffDurationRemain int32                  `protobuf:"varint,43,opt,name=buff_duration_remain,json=buffDurationRemain,proto3" json:"buff_duration_remain,omitempty"`
-	BuffDurationMax    int32                  `protobuf:"varint,44,opt,name=buff_duration_max,json=buffDurationMax,proto3" json:"buff_duration_max,omitempty"`
-	RallyTargets       []*RallyTarget         `protobuf:"bytes,45,rep,name=rally_targets,json=rallyTargets,proto3" json:"rally_targets,omitempty"`
-	Actions            []*AvailableAbility    `protobuf:"bytes,100,rep,name=actions,proto3" json:"actions,omitempty"`
+	// Fields are populated based on type/alliance
+	DisplayType        DisplayType `protobuf:"varint,1,opt,name=display_type,json=displayType,proto3,enum=SC2APIProtocol.DisplayType" json:"display_type,omitempty"`
+	Alliance           Alliance    `protobuf:"varint,2,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
+	Tag                UnitTag      `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"` // Unique identifier for a unit
+	UnitType           UnitTypeID      `protobuf:"varint,4,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	Owner              PlayerID       `protobuf:"varint,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pos                *Point      `protobuf:"bytes,6,opt,name=pos,proto3" json:"pos,omitempty"`
+	Facing             float32     `protobuf:"fixed32,7,opt,name=facing,proto3" json:"facing,omitempty"`
+	Radius             float32     `protobuf:"fixed32,8,opt,name=radius,proto3" json:"radius,omitempty"`
+	BuildProgress      float32     `protobuf:"fixed32,9,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
+	Cloak              CloakState  `protobuf:"varint,10,opt,name=cloak,proto3,enum=SC2APIProtocol.CloakState" json:"cloak,omitempty"`
+	BuffIds            []BuffID    `protobuf:"varint,27,rep,packed,name=buff_ids,json=buffIds,proto3" json:"buff_ids,omitempty"`
+	DetectRange        float32     `protobuf:"fixed32,31,opt,name=detect_range,json=detectRange,proto3" json:"detect_range,omitempty"`
+	RadarRange         float32     `protobuf:"fixed32,32,opt,name=radar_range,json=radarRange,proto3" json:"radar_range,omitempty"`
+	IsSelected         bool        `protobuf:"varint,11,opt,name=is_selected,json=isSelected,proto3" json:"is_selected,omitempty"`
+	IsOnScreen         bool        `protobuf:"varint,12,opt,name=is_on_screen,json=isOnScreen,proto3" json:"is_on_screen,omitempty"` // Visible and within the camera frustrum.
+	IsBlip             bool        `protobuf:"varint,13,opt,name=is_blip,json=isBlip,proto3" json:"is_blip,omitempty"`               // Detected by sensor tower
+	IsPowered          bool        `protobuf:"varint,35,opt,name=is_powered,json=isPowered,proto3" json:"is_powered,omitempty"`
+	IsActive           bool        `protobuf:"varint,39,opt,name=is_active,json=isActive,proto3" json:"is_active,omitempty"` // Building is training/researching (ie animated).
+	AttackUpgradeLevel int32       `protobuf:"varint,40,opt,name=attack_upgrade_level,json=attackUpgradeLevel,proto3" json:"attack_upgrade_level,omitempty"`
+	ArmorUpgradeLevel  int32       `protobuf:"varint,41,opt,name=armor_upgrade_level,json=armorUpgradeLevel,proto3" json:"armor_upgrade_level,omitempty"`
+	ShieldUpgradeLevel int32       `protobuf:"varint,42,opt,name=shield_upgrade_level,json=shieldUpgradeLevel,proto3" json:"shield_upgrade_level,omitempty"`
+	// Not populated for snapshots
+	Health          float32 `protobuf:"fixed32,14,opt,name=health,proto3" json:"health,omitempty"`
+	HealthMax       float32 `protobuf:"fixed32,15,opt,name=health_max,json=healthMax,proto3" json:"health_max,omitempty"`
+	Shield          float32 `protobuf:"fixed32,16,opt,name=shield,proto3" json:"shield,omitempty"`
+	ShieldMax       float32 `protobuf:"fixed32,36,opt,name=shield_max,json=shieldMax,proto3" json:"shield_max,omitempty"`
+	Energy          float32 `protobuf:"fixed32,17,opt,name=energy,proto3" json:"energy,omitempty"`
+	EnergyMax       float32 `protobuf:"fixed32,37,opt,name=energy_max,json=energyMax,proto3" json:"energy_max,omitempty"`
+	MineralContents int32   `protobuf:"varint,18,opt,name=mineral_contents,json=mineralContents,proto3" json:"mineral_contents,omitempty"`
+	VespeneContents int32   `protobuf:"varint,19,opt,name=vespene_contents,json=vespeneContents,proto3" json:"vespene_contents,omitempty"`
+	IsFlying        bool    `protobuf:"varint,20,opt,name=is_flying,json=isFlying,proto3" json:"is_flying,omitempty"`
+	IsBurrowed      bool    `protobuf:"varint,21,opt,name=is_burrowed,json=isBurrowed,proto3" json:"is_burrowed,omitempty"`
+	IsHallucination bool    `protobuf:"varint,38,opt,name=is_hallucination,json=isHallucination,proto3" json:"is_hallucination,omitempty"` // Unit is your own or detected as a hallucination.
+	// Not populated for enemies
+	Orders             []*UnitOrder     `protobuf:"bytes,22,rep,name=orders,proto3" json:"orders,omitempty"`
+	AddOnTag           UnitTag           `protobuf:"varint,23,opt,name=add_on_tag,json=addOnTag,proto3" json:"add_on_tag,omitempty"`
+	Passengers         []*PassengerUnit `protobuf:"bytes,24,rep,name=passengers,proto3" json:"passengers,omitempty"`
+	CargoSpaceTaken    int32            `protobuf:"varint,25,opt,name=cargo_space_taken,json=cargoSpaceTaken,proto3" json:"cargo_space_taken,omitempty"`
+	CargoSpaceMax      int32            `protobuf:"varint,26,opt,name=cargo_space_max,json=cargoSpaceMax,proto3" json:"cargo_space_max,omitempty"`
+	AssignedHarvesters int32            `protobuf:"varint,28,opt,name=assigned_harvesters,json=assignedHarvesters,proto3" json:"assigned_harvesters,omitempty"`
+	IdealHarvesters    int32            `protobuf:"varint,29,opt,name=ideal_harvesters,json=idealHarvesters,proto3" json:"ideal_harvesters,omitempty"`
+	WeaponCooldown     float32          `protobuf:"fixed32,30,opt,name=weapon_cooldown,json=weaponCooldown,proto3" json:"weapon_cooldown,omitempty"`
+	EngagedTargetTag   UnitTag           `protobuf:"varint,34,opt,name=engaged_target_tag,json=engagedTargetTag,proto3" json:"engaged_target_tag,omitempty"`
+	BuffDurationRemain int32            `protobuf:"varint,43,opt,name=buff_duration_remain,json=buffDurationRemain,proto3" json:"buff_duration_remain,omitempty"` // How long a buff or unit is still around (eg mule, broodling, chronoboost).
+	BuffDurationMax    int32            `protobuf:"varint,44,opt,name=buff_duration_max,json=buffDurationMax,proto3" json:"buff_duration_max,omitempty"`          // How long the buff or unit is still around (eg mule, broodling, chronoboost).
+	RallyTargets       []*RallyTarget   `protobuf:"bytes,45,rep,name=rally_targets,json=rallyTargets,proto3" json:"rally_targets,omitempty"`
+	Actions []*AvailableAbility // framework field, not serialized
 }
 
 func (x *Unit) Reset() {
@@ -1039,16 +1042,9 @@ func (x *Unit) GetRallyTargets() []*RallyTarget {
 	return nil
 }
 
-func (x *Unit) GetActions() []*AvailableAbility {
-	if x != nil {
-		return x.Actions
-	}
-	return nil
-}
-
 type MapState struct {
-	Visibility    *ImageData             `protobuf:"bytes,1,opt,name=visibility,proto3" json:"visibility,omitempty"`
-	Creep         *ImageData             `protobuf:"bytes,2,opt,name=creep,proto3" json:"creep,omitempty"`
+	Visibility    *ImageData             `protobuf:"bytes,1,opt,name=visibility,proto3" json:"visibility,omitempty"` // 1 byte visibility layer.
+	Creep         *ImageData             `protobuf:"bytes,2,opt,name=creep,proto3" json:"creep,omitempty"`           // 1 bit creep layer.
 }
 
 func (x *MapState) Reset() {
@@ -1116,7 +1112,7 @@ func (x *Event) GetDeadUnits() []UnitTag {
 
 type Effect struct {
 	EffectId      EffectID                 `protobuf:"varint,1,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
-	Pos           []*Point2D             `protobuf:"bytes,2,rep,name=pos,proto3" json:"pos,omitempty"`
+	Pos           []*Point2D             `protobuf:"bytes,2,rep,name=pos,proto3" json:"pos,omitempty"` // Effect may impact multiple locations. (eg. Lurker attack)
 	Alliance      Alliance               `protobuf:"varint,3,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
 	Owner         PlayerID                  `protobuf:"varint,4,opt,name=owner,proto3" json:"owner,omitempty"`
 	Radius        float32                `protobuf:"fixed32,5,opt,name=radius,proto3" json:"radius,omitempty"`
@@ -1472,7 +1468,7 @@ const file_raw_proto_rawDesc = "" +
 	"\tunit_type\x18\x06 \x01(\rR\bunitType\"L\n" +
 	"\vRallyTarget\x12+\n" +
 	"\x05point\x18\x01 \x01(\v2\x15.SC2APIProtocol.PointR\x05point\x12\x10\n" +
-	"\x03tag\x18\x02 \x01(\x04R\x03tag\"\xd5\r\n" +
+	"\x03tag\x18\x02 \x01(\x04R\x03tag\"\x99\r\n" +
 	"\x04Unit\x12>\n" +
 	"\fdisplay_type\x18\x01 \x01(\x0e2\x1b.SC2APIProtocol.DisplayTypeR\vdisplayType\x124\n" +
 	"\balliance\x18\x02 \x01(\x0e2\x18.SC2APIProtocol.AllianceR\balliance\x12\x10\n" +
@@ -1529,8 +1525,7 @@ const file_raw_proto_rawDesc = "" +
 	"\x12engaged_target_tag\x18\" \x01(\x04R\x10engagedTargetTag\x120\n" +
 	"\x14buff_duration_remain\x18+ \x01(\x05R\x12buffDurationRemain\x12*\n" +
 	"\x11buff_duration_max\x18, \x01(\x05R\x0fbuffDurationMax\x12@\n" +
-	"\rrally_targets\x18- \x03(\v2\x1b.SC2APIProtocol.RallyTargetR\frallyTargets\x12:\n" +
-	"\aactions\x18d \x03(\v2 .SC2APIProtocol.AvailableAbilityR\aactions\"v\n" +
+	"\rrally_targets\x18- \x03(\v2\x1b.SC2APIProtocol.RallyTargetR\frallyTargets\"v\n" +
 	"\bMapState\x129\n" +
 	"\n" +
 	"visibility\x18\x01 \x01(\v2\x19.SC2APIProtocol.ImageDataR\n" +
@@ -1626,7 +1621,6 @@ var file_raw_proto_goTypes = []any{
 	(*RectangleI)(nil),              // 21: SC2APIProtocol.RectangleI
 	(*Point2D)(nil),                 // 22: SC2APIProtocol.Point2D
 	(*Point)(nil),                   // 23: SC2APIProtocol.Point
-	(*AvailableAbility)(nil),        // 24: SC2APIProtocol.AvailableAbility
 }
 var file_raw_proto_depIdxs = []int32{
 	19, // 0: SC2APIProtocol.StartRaw.map_size:type_name -> SC2APIProtocol.Size2DI
@@ -1654,21 +1648,20 @@ var file_raw_proto_depIdxs = []int32{
 	8,  // 22: SC2APIProtocol.Unit.orders:type_name -> SC2APIProtocol.UnitOrder
 	9,  // 23: SC2APIProtocol.Unit.passengers:type_name -> SC2APIProtocol.PassengerUnit
 	10, // 24: SC2APIProtocol.Unit.rally_targets:type_name -> SC2APIProtocol.RallyTarget
-	24, // 25: SC2APIProtocol.Unit.actions:type_name -> SC2APIProtocol.AvailableAbility
-	20, // 26: SC2APIProtocol.MapState.visibility:type_name -> SC2APIProtocol.ImageData
-	20, // 27: SC2APIProtocol.MapState.creep:type_name -> SC2APIProtocol.ImageData
-	22, // 28: SC2APIProtocol.Effect.pos:type_name -> SC2APIProtocol.Point2D
-	1,  // 29: SC2APIProtocol.Effect.alliance:type_name -> SC2APIProtocol.Alliance
-	16, // 30: SC2APIProtocol.ActionRaw.unit_command:type_name -> SC2APIProtocol.ActionRawUnitCommand
-	17, // 31: SC2APIProtocol.ActionRaw.camera_move:type_name -> SC2APIProtocol.ActionRawCameraMove
-	18, // 32: SC2APIProtocol.ActionRaw.toggle_autocast:type_name -> SC2APIProtocol.ActionRawToggleAutocast
-	22, // 33: SC2APIProtocol.ActionRawUnitCommand.target_world_space_pos:type_name -> SC2APIProtocol.Point2D
-	23, // 34: SC2APIProtocol.ActionRawCameraMove.center_world_space:type_name -> SC2APIProtocol.Point
-	35, // [35:35] is the sub-list for method output_type
-	35, // [35:35] is the sub-list for method input_type
-	35, // [35:35] is the sub-list for extension type_name
-	35, // [35:35] is the sub-list for extension extendee
-	0,  // [0:35] is the sub-list for field type_name
+	20, // 25: SC2APIProtocol.MapState.visibility:type_name -> SC2APIProtocol.ImageData
+	20, // 26: SC2APIProtocol.MapState.creep:type_name -> SC2APIProtocol.ImageData
+	22, // 27: SC2APIProtocol.Effect.pos:type_name -> SC2APIProtocol.Point2D
+	1,  // 28: SC2APIProtocol.Effect.alliance:type_name -> SC2APIProtocol.Alliance
+	16, // 29: SC2APIProtocol.ActionRaw.unit_command:type_name -> SC2APIProtocol.ActionRawUnitCommand
+	17, // 30: SC2APIProtocol.ActionRaw.camera_move:type_name -> SC2APIProtocol.ActionRawCameraMove
+	18, // 31: SC2APIProtocol.ActionRaw.toggle_autocast:type_name -> SC2APIProtocol.ActionRawToggleAutocast
+	22, // 32: SC2APIProtocol.ActionRawUnitCommand.target_world_space_pos:type_name -> SC2APIProtocol.Point2D
+	23, // 33: SC2APIProtocol.ActionRawCameraMove.center_world_space:type_name -> SC2APIProtocol.Point
+	34, // [34:34] is the sub-list for method output_type
+	34, // [34:34] is the sub-list for method input_type
+	34, // [34:34] is the sub-list for extension type_name
+	34, // [34:34] is the sub-list for extension extendee
+	0,  // [0:34] is the sub-list for field type_name
 }
 
 func init() { file_raw_proto_init() }

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bufio"
+	"flag"
 	"fmt"
 	"os"
 	"os/exec"
@@ -12,27 +12,27 @@ import (
 	git "github.com/go-git/go-git/v5"
 )
 
+var debug = flag.Bool("debug", false, "preserve temp proto files for inspection")
+
 func main() {
-	// Save typeMap for post-processing (mapTypes deletes entries for validation)
-	allTypes := make(map[string]string, len(typeMap))
-	for k, v := range typeMap {
-		allTypes[k] = v
-	}
+	flag.Parse()
 
 	// Checkout a temp copy of the API files
 	dir, err := os.MkdirTemp("", "s2client-proto")
 	check(err)
 	defer os.RemoveAll(dir)
 
-	// // Preserve the test directory to look at
-	// defer func() {
-	// 	if err := recover(); err != nil {
-	// 		fmt.Println(err)
-	// 	}
-
-	// 	fmt.Print("Press 'Enter' to continue...")
-	// 	bufio.NewReader(os.Stdin).ReadBytes('\n')
-	// }()
+	if *debug {
+		fmt.Println("Proto files in:", dir)
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+			fmt.Print("Press Enter to continue...")
+			b := make([]byte, 1)
+			os.Stdin.Read(b)
+		}()
+	}
 
 	_, err = git.PlainClone(dir, false, &git.CloneOptions{
 		URL:      "https://github.com/Blizzard/s2client-proto",
@@ -57,127 +57,54 @@ func main() {
 		path := filepath.Join(protoDir, file.Name())
 
 		// Upgrade the file to proto3 and fix the package name
-		writeLines(path, upgradeProto(path))
+		check(os.WriteFile(path, []byte(upgradeProto(path)), 0644))
 
 		// Add the file to the list of command line args for protoc
 		protocArgs = append(protocArgs, path)
 	}
 
-	// Make sure we mapped all the expected types
-	if len(typeMap) != 0 {
-		fmt.Println("Not all types were mapped, missing:")
-		for key := range typeMap {
-			fmt.Println(key)
-		}
-	}
-
 	// Generate go code from the .proto files
-	fmt.Println("protoc " + strings.Join(protocArgs, " ") + "\n\n")
+	fmt.Println("protoc " + strings.Join(protocArgs, " "))
+	fmt.Println()
 	out, err := exec.Command("protoc", protocArgs...).CombinedOutput()
-	fmt.Println(string(out) + "\n\n")
+	if len(out) > 0 {
+		fmt.Println(string(out))
+	}
 	check(err)
 
-	// Post-process generated files: add semantic types and fix enum naming
-	rewriteGeneratedFiles(allTypes)
-
-	// Strip protoimpl internals (state, sizeCache, unknownFields) from all message types.
-	// We use vtprotobuf exclusively, so the standard proto reflection machinery is unnecessary.
-	// This makes simple types like Point2D comparable and eliminates mutex-copy warnings.
-	stripProtoInternals()
+	// Post-process generated files: add semantic types, fix enum naming,
+	// and strip protoimpl internals for vtprotobuf-only usage.
+	postProcessGeneratedFiles()
 }
 
-// Thing we want to use twice
-const (
-	importPrefix   = "import \"s2clientprotocol/"
-	optionalPrefix = "optional "
-	enumPrefix     = "enum "
-	messagePrefix  = "message "
-)
-
-func upgradeProto(path string) []string {
-	file, err := os.Open(path)
+func upgradeProto(path string) string {
+	content, err := os.ReadFile(path)
 	check(err)
-	defer file.Close()
+	text := string(content)
 
-	propPath := []string{}
-	var lines []string
+	// Upgrade syntax and set Go package
+	text = strings.Replace(text, `syntax = "proto2";`,
+		"syntax = \"proto3\";\noption go_package = \"github.com/chippydip/go-sc2ai/api\";", 1)
 
-	// Read line by line, making modifications as needed
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		// Get the line and trim comments and whitespace to make matching easier
-		line := scanner.Text()
-		if comment := strings.Index(line, "//"); comment > 0 {
-			line = line[:comment]
+	// Fix import paths (remove s2clientprotocol/ subdirectory)
+	text = strings.ReplaceAll(text, `import "s2clientprotocol/`, `import "`)
+
+	// Remove "optional" qualifier (implicit in proto3)
+	optionalRe := regexp.MustCompile(`(?m)^(\s*)optional `)
+	text = optionalRe.ReplaceAllString(text, "$1")
+
+	// Add zero values for enums (required in proto3; Race and CloakState already have them)
+	enumRe := regexp.MustCompile(`(?m)^(\s*)enum (\w+) \{`)
+	text = enumRe.ReplaceAllStringFunc(text, func(match string) string {
+		groups := enumRe.FindStringSubmatch(match)
+		name := groups[2]
+		if name == "Race" || name == "CloakState" {
+			return match
 		}
-		line = strings.TrimSpace(line)
+		return match + "\n" + groups[1] + "  " + name + "_nil = 0;"
+	})
 
-		switch {
-		// Upgrade to proto3 and set the go package name
-		case line == "syntax = \"proto2\";":
-			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"github.com/chippydip/go-sc2ai/api\";")
-
-		// Remove subdirectory of the import so the output path isn't nested
-		case strings.HasPrefix(line, importPrefix):
-			lines = append(lines, "import \""+line[len(importPrefix):])
-
-		// Remove "optional" prefixes (they are implicit in proto3)
-		case strings.HasPrefix(line, optionalPrefix):
-			lines = append(lines, mapTypes(propPath, line[len(optionalPrefix):]))
-
-		// Track where we are in the path
-		case strings.HasSuffix(line, " {"):
-			id := strings.Split(line, " ")[1] // "<type> Identifier {"
-			propPath = append(propPath, id)
-
-			lines = append(lines, line)
-
-			// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
-			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" && line != "enum CloakState {" {
-				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_nil = 0;")
-			}
-
-		// Pop the last path element
-		case line == "}":
-			if propPath[len(propPath)-1] == "Unit" {
-				lines = append(lines,
-					"repeated AvailableAbility actions = 100;",
-				)
-			}
-			propPath = propPath[:len(propPath)-1]
-			lines = append(lines, line)
-
-		// Everything else just gets copied to the output
-		default:
-			lines = append(lines, mapTypes(propPath, line))
-		}
-	}
-
-	return lines
-}
-
-func mapTypes(path []string, line string) string {
-	parts := strings.Split(line, " ")
-	if len(parts) < 4 {
-		return line // need at least "<type> <name> = <num>;"
-	}
-
-	key := strings.Join(path, ".") + "." + parts[len(parts)-3]
-	delete(typeMap, key) // track which ones have been processed (no-op if not present)
-
-	return line
-}
-
-func writeLines(path string, lines []string) {
-	file, err := os.Create(path)
-	check(err)
-	defer file.Close()
-
-	writer := bufio.NewWriter(file)
-	for _, line := range lines {
-		fmt.Fprintln(writer, line)
-	}
-	check(writer.Flush())
+	return text
 }
 
 func check(err error) {
@@ -186,123 +113,92 @@ func check(err error) {
 	}
 }
 
-// Make the API more type-safe
-var typeMap = map[string]string{
-	// common.proto
-	"AvailableAbility.ability_id": "AbilityID",
-	// data.proto
-	"AbilityData.ability_id":           "AbilityID",
-	"AbilityData.remaps_to_ability_id": "AbilityID",
-	"UnitTypeData.unit_id":             "UnitTypeID",
-	"UnitTypeData.ability_id":          "AbilityID",
-	"UnitTypeData.tech_alias":          "UnitTypeID",
-	"UnitTypeData.unit_alias":          "UnitTypeID",
-	"UnitTypeData.tech_requirement":    "UnitTypeID",
-	"UpgradeData.upgrade_id":           "UpgradeID",
-	"UpgradeData.ability_id":           "AbilityID",
-	"BuffData.buff_id":                 "BuffID",
-	"EffectData.effect_id":             "EffectID",
-	// debug.proto
-	"DebugCreateUnit.unit_type":  "UnitTypeID",
-	"DebugCreateUnit.owner":      "PlayerID",
-	"DebugKillUnit.tag":          "UnitTag",
-	"DebugSetUnitValue.unit_tag": "UnitTag",
-	// error.proto
-	// query.proto
-	"RequestQueryPathing.start.unit_tag":             "UnitTag",
-	"RequestQueryAvailableAbilities.unit_tag":        "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_tag":       "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_type_id":   "UnitTypeID",
-	"RequestQueryBuildingPlacement.ability_id":       "AbilityID",
-	"RequestQueryBuildingPlacement.placing_unit_tag": "UnitTag",
-	// raw.proto
-	"PowerSource.tag":                             "UnitTag",
-	"PlayerRaw.upgrade_ids":                       "UpgradeID",
-	"UnitOrder.ability_id":                        "AbilityID",
-	"UnitOrder.target.target_unit_tag":            "UnitTag",
-	"PassengerUnit.tag":                           "UnitTag",
-	"PassengerUnit.unit_type":                     "UnitTypeID",
-	"Unit.tag":                                    "UnitTag",
-	"Unit.unit_type":                              "UnitTypeID",
-	"Unit.owner":                                  "PlayerID",
-	"Unit.add_on_tag":                             "UnitTag",
-	"Unit.buff_ids":                               "BuffID",
-	"Unit.engaged_target_tag":                     "UnitTag",
-	"Event.dead_units":                            "UnitTag",
-	"Effect.effect_id":                            "EffectID",
-	"ActionRawUnitCommand.ability_id":             "AbilityID",
-	"ActionRawUnitCommand.target.target_unit_tag": "UnitTag",
-	"ActionRawUnitCommand.unit_tags":              "UnitTag",
-	"ActionRawToggleAutocast.ability_id":          "AbilityID",
-	"ActionRawToggleAutocast.unit_tags":           "UnitTag",
-	// sc2api.proto
-	"RequestJoinGame.participation.observed_player_id": "PlayerID",
-	"ResponseJoinGame.player_id":                       "PlayerID",
-	"RequestStartReplay.observed_player_id":            "PlayerID",
-	"ChatReceived.player_id":                           "PlayerID",
-	"PlayerInfo.player_id":                             "PlayerID",
-	"PlayerCommon.player_id":                           "PlayerID",
-	"ActionError.unit_tag":                             "UnitTag",
-	"ActionError.ability_id":                           "AbilityID",
-	"ActionObserverPlayerPerspective.player_id":        "PlayerID",
-	"ActionObserverCameraFollowPlayer.player_id":       "PlayerID",
-	"ActionObserverCameraFollowUnits.unit_tags":        "UnitTag",
-	"PlayerResult.player_id":                           "PlayerID",
-	// score.proto
-	// spatial.proto
-	// ui.proto
-	"ControlGroup.leader_unit_type":   "UnitTypeID",
-	"UnitInfo.unit_type":              "UnitTypeID",
-	"UnitInfo.player_relative":        "PlayerID", // TODO: is this correct?
-	"BuildItem.ability_id":            "AbilityID",
-	"ActionToggleAutocast.ability_id": "AbilityID",
+// goFieldTargets maps Go field names (as generated by protoc-gen-go) to semantic
+// types that replace the default numeric types (uint32, uint64, etc.) for type safety.
+// Grouped by target type; comments list the proto message types containing each field.
+var goFieldTargets = map[string]string{
+	// → AbilityID
+	"AbilityId":         "AbilityID", // AvailableAbility, AbilityData, UnitTypeData, UpgradeData, UnitOrder, ActionRawUnitCommand, ActionRawToggleAutocast, RequestQueryBuildingPlacement, ActionError, BuildItem, ActionToggleAutocast
+	"RemapsToAbilityId": "AbilityID", // AbilityData
+
+	// → UnitTypeID
+	"UnitId":          "UnitTypeID", // UnitTypeData
+	"UnitType":        "UnitTypeID", // DebugCreateUnit, PassengerUnit, Unit, UnitInfo
+	"TechAlias":       "UnitTypeID", // UnitTypeData
+	"UnitAlias":       "UnitTypeID", // UnitTypeData
+	"TechRequirement": "UnitTypeID", // UnitTypeData
+	"LeaderUnitType":  "UnitTypeID", // ControlGroup
+	"UnitTypeId":      "UnitTypeID", // ResponseQueryAvailableAbilities
+
+	// → UpgradeID
+	"UpgradeId":  "UpgradeID", // UpgradeData
+	"UpgradeIds": "UpgradeID", // PlayerRaw
+
+	// → BuffID
+	"BuffId":  "BuffID", // BuffData
+	"BuffIds": "BuffID", // Unit
+
+	// → EffectID
+	"EffectId": "EffectID", // EffectData, Effect
+
+	// → UnitTag
+	"Tag":              "UnitTag", // PowerSource, PassengerUnit, Unit, DebugKillUnit
+	"UnitTag":          "UnitTag", // DebugSetUnitValue, RequestQueryAvailableAbilities, ResponseQueryAvailableAbilities, ActionError
+	"TargetUnitTag":    "UnitTag", // UnitOrder, ActionRawUnitCommand
+	"UnitTags":         "UnitTag", // ActionRawUnitCommand, ActionRawToggleAutocast, ActionObserverCameraFollowUnits
+	"PlacingUnitTag":   "UnitTag", // RequestQueryBuildingPlacement
+	"AddOnTag":         "UnitTag", // Unit
+	"EngagedTargetTag": "UnitTag", // Unit
+	"DeadUnits":        "UnitTag", // Event
+
+	// → PlayerID
+	"Owner":            "PlayerID", // DebugCreateUnit, Unit
+	"PlayerId":         "PlayerID", // ResponseJoinGame, ChatReceived, PlayerInfo, PlayerCommon, ActionObserverPlayerPerspective, ActionObserverCameraFollowPlayer, PlayerResult
+	"ObservedPlayerId": "PlayerID", // RequestJoinGame, RequestStartReplay
+	"PlayerRelative":   "PlayerID", // UnitInfo — TODO: is this correct?
 }
 
 // TODO: spatial.proto?
 
-// snakeToCamel converts a snake_case proto field name to CamelCase Go field name.
-func snakeToCamel(s string) string {
-	parts := strings.Split(s, "_")
-	for i, p := range parts {
-		if len(p) > 0 {
-			parts[i] = strings.ToUpper(p[:1]) + p[1:]
-		}
-	}
-	return strings.Join(parts, "")
-}
-
-// rewriteGeneratedFiles post-processes protoc output to replace primitive
-// types with semantic types (AbilityID, UnitTag, etc.) and fix enum naming.
-func rewriteGeneratedFiles(allTypes map[string]string) {
-	// Build goFieldName → targetType lookup.
-	// Every Go field name maps to exactly one target type across all structs,
-	// so we can do global replacements without scoping to specific structs.
-	goFieldTargets := map[string]string{}
-	for key, target := range allTypes {
-		parts := strings.Split(key, ".")
-		protoField := parts[len(parts)-1]
-		goField := snakeToCamel(protoField)
-		if existing, ok := goFieldTargets[goField]; ok && existing != target {
-			panic(fmt.Sprintf("conflicting targets for %s: %s vs %s", goField, existing, target))
-		}
-		goFieldTargets[goField] = target
-	}
-
+// postProcessGeneratedFiles rewrites protoc output to replace primitive types
+// with semantic types (AbilityID, UnitTag, etc.), fix enum naming, and strip
+// protoimpl internals that are unnecessary with vtprotobuf.
+func postProcessGeneratedFiles() {
 	files, err := filepath.Glob(filepath.Join("api", "*.pb.go"))
 	check(err)
 
-	// First pass: rewrite types in .pb.go and _vtproto.pb.go files,
-	// and collect enum renames from .pb.go files.
-	enumRenames := map[string]string{} // old const name → new const name
+	// First pass: rewrite types and strip internals, collecting enum renames.
+	enumRenames := map[string]string{}
 	for _, f := range files {
+		content, err := os.ReadFile(f)
+		check(err)
+		text := string(content)
+		original := text
+
 		if strings.HasSuffix(f, "_vtproto.pb.go") {
-			rewriteVtprotoFile(f, goFieldTargets)
+			text = rewriteVtprotoTypes(text, goFieldTargets)
+			text = stripVtprotoUnknownFields(text)
 		} else {
-			rewritePbGoFile(f, goFieldTargets, enumRenames)
+			var renames map[string]string
+			text, renames = rewritePbGoTypes(text, goFieldTargets)
+			for k, v := range renames {
+				enumRenames[k] = v
+			}
+			text = stripPbGoInternals(text)
+
+			// Add Actions field to Unit struct (framework-only, not part of SC2 proto)
+			unitStructRe := regexp.MustCompile(`(type Unit struct \{[^}]*)(})`)
+			text = unitStructRe.ReplaceAllString(text,
+				"${1}\tActions []*AvailableAbility // framework field, not serialized\n$2")
+		}
+
+		if text != original {
+			check(os.WriteFile(f, []byte(text), 0644))
+			fmt.Printf("Post-processed %s\n", f)
 		}
 	}
 
-	// Second pass: apply enum renames across ALL .pb.go files (cross-file references).
+	// Second pass: apply enum renames across all .pb.go files (cross-file references).
 	if len(enumRenames) > 0 {
 		for _, f := range files {
 			if strings.HasSuffix(f, "_vtproto.pb.go") {
@@ -333,15 +229,10 @@ func isNumericType(t string) bool {
 	return false
 }
 
-// rewritePbGoFile rewrites struct field types, getter return types, and
-// double-prefix enum nil constants in a generated .pb.go file.
-func rewritePbGoFile(filename string, goFieldTargets map[string]string, enumRenames map[string]string) {
-	content, err := os.ReadFile(filename)
-	check(err)
-	text := string(content)
-	original := text
-
-	for goField, target := range goFieldTargets {
+// rewritePbGoTypes rewrites struct field types, getter return types, and
+// collects double-prefix enum nil constants for renaming.
+func rewritePbGoTypes(text string, targets map[string]string) (string, map[string]string) {
+	for goField, target := range targets {
 		// Rewrite struct field types.
 		// Matches: \t<GoField>  <type>  `protobuf:
 		fieldRe := regexp.MustCompile(
@@ -380,6 +271,7 @@ func rewritePbGoFile(filename string, goFieldTargets map[string]string, enumRena
 	// Collect double-prefix enum nil constants for cross-file renaming.
 	// protoc-gen-go generates Status_Status_nil for top-level enum Status with
 	// value Status_nil. We rename to Status_nil for backward compat.
+	enumRenames := map[string]string{}
 	nilConstRe := regexp.MustCompile(`\t(\w+_nil)\s+(\w+)\s*=\s*0\b`)
 	for _, match := range nilConstRe.FindAllStringSubmatch(text, -1) {
 		constName := match[1]
@@ -390,36 +282,12 @@ func rewritePbGoFile(filename string, goFieldTargets map[string]string, enumRena
 		}
 	}
 
-	if text != original {
-		check(os.WriteFile(filename, []byte(text), 0644))
-		fmt.Printf("Rewrote %s\n", filename)
-	}
-}
-
-// stripProtoInternals removes state, sizeCache, and unknownFields from all
-// generated message types. These fields are only needed by the standard protobuf
-// reflection API; vtprotobuf methods access data fields directly.
-func stripProtoInternals() {
-	files, err := filepath.Glob(filepath.Join("api", "*.pb.go"))
-	check(err)
-
-	for _, f := range files {
-		if strings.HasSuffix(f, "_vtproto.pb.go") {
-			stripVtprotoUnknownFields(f)
-		} else {
-			stripPbGoInternals(f)
-		}
-	}
+	return text, enumRenames
 }
 
 // stripPbGoInternals strips state/sizeCache/unknownFields fields from structs
 // and simplifies Reset() and ProtoReflect() to not use MessageStateOf.
-func stripPbGoInternals(filename string) {
-	content, err := os.ReadFile(filename)
-	check(err)
-	text := string(content)
-	original := text
-
+func stripPbGoInternals(text string) string {
 	// Strip struct fields
 	stateRe := regexp.MustCompile(`\tstate\s+protoimpl\.MessageState[^\n]*\n`)
 	unknownRe := regexp.MustCompile(`\tunknownFields\s+protoimpl\.UnknownFields\n`)
@@ -450,20 +318,12 @@ func stripPbGoInternals(filename string) {
 			`\}`)
 	text = protoReflectRe.ReplaceAllString(text, "${1}\treturn ${2}.MessageOf(x)\n}")
 
-	if text != original {
-		check(os.WriteFile(filename, []byte(text), 0644))
-		fmt.Printf("Stripped proto internals from %s\n", filename)
-	}
+	return text
 }
 
 // stripVtprotoUnknownFields removes all unknownFields references from vtproto
 // marshal, size, and unmarshal code.
-func stripVtprotoUnknownFields(filename string) {
-	content, err := os.ReadFile(filename)
-	check(err)
-	text := string(content)
-	original := text
-
+func stripVtprotoUnknownFields(text string) string {
 	// Marshal: remove the unknownFields copy block
 	marshalRe := regexp.MustCompile(
 		`\tif m\.unknownFields != nil \{\n` +
@@ -480,24 +340,18 @@ func stripVtprotoUnknownFields(filename string) {
 	unmarshalRe := regexp.MustCompile(`\t\t\tm\.unknownFields = append\(m\.unknownFields, dAtA\[iNdEx:iNdEx\+skippy\]\.\.\.\)\n`)
 	text = unmarshalRe.ReplaceAllString(text, "")
 
-	if text != original {
-		check(os.WriteFile(filename, []byte(text), 0644))
-		fmt.Printf("Stripped unknownFields from %s\n", filename)
-	}
+	return text
 }
 
-// rewriteVtprotoFile rewrites type casts in unmarshal code to use semantic types.
-func rewriteVtprotoFile(filename string, goFieldTargets map[string]string) {
-	content, err := os.ReadFile(filename)
-	check(err)
-
-	lines := strings.Split(string(content), "\n")
+// rewriteVtprotoTypes rewrites type casts in unmarshal code to use semantic types.
+func rewriteVtprotoTypes(text string, targets map[string]string) string {
+	lines := strings.Split(text, "\n")
 	changed := false
 
 	castRe := regexp.MustCompile(`(\w+)\(b&0x7F\)`)
 	makeRe := regexp.MustCompile(`make\(\[\](\w+),`)
 
-	for goField, target := range goFieldTargets {
+	for goField, target := range targets {
 		// Find case blocks by the error message that identifies the field.
 		errorPattern := `for field ` + goField + `"`
 		for i, line := range lines {
@@ -560,7 +414,7 @@ func rewriteVtprotoFile(filename string, goFieldTargets map[string]string) {
 	}
 
 	if changed {
-		check(os.WriteFile(filename, []byte(strings.Join(lines, "\n")), 0644))
-		fmt.Printf("Rewrote %s\n", filename)
+		return strings.Join(lines, "\n")
 	}
+	return text
 }

@@ -25,11 +25,11 @@ type ActionControlGroup_ControlGroupAction int32
 
 const (
 	ActionControlGroup_ControlGroupAction_nil ActionControlGroup_ControlGroupAction = 0
-	ActionControlGroup_Recall                 ActionControlGroup_ControlGroupAction = 1
-	ActionControlGroup_Set                    ActionControlGroup_ControlGroupAction = 2
-	ActionControlGroup_Append                 ActionControlGroup_ControlGroupAction = 3
-	ActionControlGroup_SetAndSteal            ActionControlGroup_ControlGroupAction = 4
-	ActionControlGroup_AppendAndSteal         ActionControlGroup_ControlGroupAction = 5
+	ActionControlGroup_Recall                 ActionControlGroup_ControlGroupAction = 1 // Equivalent to number hotkey. Replaces current selection with control group.
+	ActionControlGroup_Set                    ActionControlGroup_ControlGroupAction = 2 // Equivalent to Control + number hotkey. Sets control group to current selection.
+	ActionControlGroup_Append                 ActionControlGroup_ControlGroupAction = 3 // Equivalent to Shift + number hotkey. Adds current selection into control group.
+	ActionControlGroup_SetAndSteal            ActionControlGroup_ControlGroupAction = 4 // Equivalent to Control + Alt + number hotkey. Sets control group to current selection. Units are removed from other control groups.
+	ActionControlGroup_AppendAndSteal         ActionControlGroup_ControlGroupAction = 5 // Equivalent to Shift + Alt + number hotkey. Adds current selection into control group. Units are removed from other control groups.
 )
 
 // Enum value maps for ActionControlGroup_ControlGroupAction.
@@ -83,10 +83,10 @@ type ActionSelectIdleWorker_Type int32
 
 const (
 	ActionSelectIdleWorker_Type_nil ActionSelectIdleWorker_Type = 0
-	ActionSelectIdleWorker_Set      ActionSelectIdleWorker_Type = 1
-	ActionSelectIdleWorker_Add      ActionSelectIdleWorker_Type = 2
-	ActionSelectIdleWorker_All      ActionSelectIdleWorker_Type = 3
-	ActionSelectIdleWorker_AddAll   ActionSelectIdleWorker_Type = 4
+	ActionSelectIdleWorker_Set      ActionSelectIdleWorker_Type = 1 // Equivalent to click with no modifiers. Replaces selection with single idle worker.
+	ActionSelectIdleWorker_Add      ActionSelectIdleWorker_Type = 2 // Equivalent to shift+click. Adds single idle worker to current selection.
+	ActionSelectIdleWorker_All      ActionSelectIdleWorker_Type = 3 // Equivalent to control+click. Selects all idle workers.
+	ActionSelectIdleWorker_AddAll   ActionSelectIdleWorker_Type = 4 // Equivalent to shift+control+click. Adds all idle workers to current selection.
 )
 
 // Enum value maps for ActionSelectIdleWorker_Type.
@@ -138,10 +138,10 @@ type ActionMultiPanel_Type int32
 
 const (
 	ActionMultiPanel_Type_nil          ActionMultiPanel_Type = 0
-	ActionMultiPanel_SingleSelect      ActionMultiPanel_Type = 1
-	ActionMultiPanel_DeselectUnit      ActionMultiPanel_Type = 2
-	ActionMultiPanel_SelectAllOfType   ActionMultiPanel_Type = 3
-	ActionMultiPanel_DeselectAllOfType ActionMultiPanel_Type = 4
+	ActionMultiPanel_SingleSelect      ActionMultiPanel_Type = 1 // Click on icon
+	ActionMultiPanel_DeselectUnit      ActionMultiPanel_Type = 2 // Shift Click on icon
+	ActionMultiPanel_SelectAllOfType   ActionMultiPanel_Type = 3 // Control Click on icon.
+	ActionMultiPanel_DeselectAllOfType ActionMultiPanel_Type = 4 // Control+Shift Click on icon.
 )
 
 // Enum value maps for ActionMultiPanel_Type.
@@ -350,7 +350,7 @@ type UnitInfo struct {
 	Shields             int32                  `protobuf:"varint,4,opt,name=shields,proto3" json:"shields,omitempty"`
 	Energy              int32                  `protobuf:"varint,5,opt,name=energy,proto3" json:"energy,omitempty"`
 	TransportSlotsTaken int32                  `protobuf:"varint,6,opt,name=transport_slots_taken,json=transportSlotsTaken,proto3" json:"transport_slots_taken,omitempty"`
-	BuildProgress       float32                `protobuf:"fixed32,7,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`
+	BuildProgress       float32                `protobuf:"fixed32,7,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
 	AddOn               *UnitInfo              `protobuf:"bytes,8,opt,name=add_on,json=addOn,proto3" json:"add_on,omitempty"`
 	MaxHealth           int32                  `protobuf:"varint,9,opt,name=max_health,json=maxHealth,proto3" json:"max_health,omitempty"`
 	MaxShields          int32                  `protobuf:"varint,10,opt,name=max_shields,json=maxShields,proto3" json:"max_shields,omitempty"`
@@ -548,7 +548,7 @@ func (x *MultiPanel) GetUnits() []*UnitInfo {
 type CargoPanel struct {
 	Unit           *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	Passengers     []*UnitInfo            `protobuf:"bytes,2,rep,name=passengers,proto3" json:"passengers,omitempty"`
-	SlotsAvailable int32                  `protobuf:"varint,3,opt,name=slots_available,json=slotsAvailable,proto3" json:"slots_available,omitempty"`
+	SlotsAvailable int32                  `protobuf:"varint,3,opt,name=slots_available,json=slotsAvailable,proto3" json:"slots_available,omitempty"` // TODO: Change to cargo size
 }
 
 func (x *CargoPanel) Reset() {
@@ -593,7 +593,7 @@ func (x *CargoPanel) GetSlotsAvailable() int32 {
 
 type BuildItem struct {
 	AbilityId     AbilityID                 `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	BuildProgress float32                `protobuf:"fixed32,2,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"`
+	BuildProgress float32                `protobuf:"fixed32,2,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
 }
 
 func (x *BuildItem) Reset() {
@@ -630,9 +630,11 @@ func (x *BuildItem) GetBuildProgress() float32 {
 }
 
 type ProductionPanel struct {
-	Unit            *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
-	BuildQueue      []*UnitInfo            `protobuf:"bytes,2,rep,name=build_queue,json=buildQueue,proto3" json:"build_queue,omitempty"`
-	ProductionQueue []*BuildItem           `protobuf:"bytes,3,rep,name=production_queue,json=productionQueue,proto3" json:"production_queue,omitempty"`
+	Unit  *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	// build_queue ONLY gives information about units that are being produced.
+	// Use production_queue instead to see both units being trained as well as research in the queue.
+	BuildQueue      []*UnitInfo  `protobuf:"bytes,2,rep,name=build_queue,json=buildQueue,proto3" json:"build_queue,omitempty"`
+	ProductionQueue []*BuildItem `protobuf:"bytes,3,rep,name=production_queue,json=productionQueue,proto3" json:"production_queue,omitempty"`
 }
 
 func (x *ProductionPanel) Reset() {
