@@ -71,9 +71,9 @@ func (Score_ScoreType) EnumDescriptor() ([]byte, []int) {
 }
 
 type Score struct {
-	ScoreType     Score_ScoreType        `protobuf:"varint,6,opt,name=score_type,json=scoreType,proto3,enum=SC2APIProtocol.Score_ScoreType" json:"score_type,omitempty"`
-	Score         int32                  `protobuf:"varint,7,opt,name=score,proto3" json:"score,omitempty"` // Note: check score_type to know whether this is a melee score or curriculum score
-	ScoreDetails  *ScoreDetails          `protobuf:"bytes,8,opt,name=score_details,json=scoreDetails,proto3" json:"score_details,omitempty"`
+	ScoreType    Score_ScoreType `protobuf:"varint,6,opt,name=score_type,json=scoreType,proto3,enum=SC2APIProtocol.Score_ScoreType" json:"score_type,omitempty"`
+	Score        int32           `protobuf:"varint,7,opt,name=score,proto3" json:"score,omitempty"` // Note: check score_type to know whether this is a melee score or curriculum score
+	ScoreDetails *ScoreDetails   `protobuf:"bytes,8,opt,name=score_details,json=scoreDetails,proto3" json:"score_details,omitempty"`
 }
 
 func (x *Score) Reset() {
@@ -117,11 +117,11 @@ func (x *Score) GetScoreDetails() *ScoreDetails {
 }
 
 type CategoryScoreDetails struct {
-	None          float32                `protobuf:"fixed32,1,opt,name=none,proto3" json:"none,omitempty"` // Used when no other category is configured in game data
-	Army          float32                `protobuf:"fixed32,2,opt,name=army,proto3" json:"army,omitempty"`
-	Economy       float32                `protobuf:"fixed32,3,opt,name=economy,proto3" json:"economy,omitempty"`
-	Technology    float32                `protobuf:"fixed32,4,opt,name=technology,proto3" json:"technology,omitempty"`
-	Upgrade       float32                `protobuf:"fixed32,5,opt,name=upgrade,proto3" json:"upgrade,omitempty"`
+	None       float32 `protobuf:"fixed32,1,opt,name=none,proto3" json:"none,omitempty"` // Used when no other category is configured in game data
+	Army       float32 `protobuf:"fixed32,2,opt,name=army,proto3" json:"army,omitempty"`
+	Economy    float32 `protobuf:"fixed32,3,opt,name=economy,proto3" json:"economy,omitempty"`
+	Technology float32 `protobuf:"fixed32,4,opt,name=technology,proto3" json:"technology,omitempty"`
+	Upgrade    float32 `protobuf:"fixed32,5,opt,name=upgrade,proto3" json:"upgrade,omitempty"`
 }
 
 func (x *CategoryScoreDetails) Reset() {
@@ -179,9 +179,9 @@ func (x *CategoryScoreDetails) GetUpgrade() float32 {
 }
 
 type VitalScoreDetails struct {
-	Life          float32                `protobuf:"fixed32,1,opt,name=life,proto3" json:"life,omitempty"`
-	Shields       float32                `protobuf:"fixed32,2,opt,name=shields,proto3" json:"shields,omitempty"`
-	Energy        float32                `protobuf:"fixed32,3,opt,name=energy,proto3" json:"energy,omitempty"`
+	Life    float32 `protobuf:"fixed32,1,opt,name=life,proto3" json:"life,omitempty"`
+	Shields float32 `protobuf:"fixed32,2,opt,name=shields,proto3" json:"shields,omitempty"`
+	Energy  float32 `protobuf:"fixed32,3,opt,name=energy,proto3" json:"energy,omitempty"`
 }
 
 func (x *VitalScoreDetails) Reset() {

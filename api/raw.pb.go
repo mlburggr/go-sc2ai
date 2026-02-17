@@ -24,11 +24,11 @@ const (
 type DisplayType int32
 
 const (
-	DisplayType_nil DisplayType = 0
-	DisplayType_Visible         DisplayType = 1 // Fully visible
-	DisplayType_Snapshot        DisplayType = 2 // Dimmed version of unit left behind after entering fog of war
-	DisplayType_Hidden          DisplayType = 3 // Fully hidden
-	DisplayType_Placeholder     DisplayType = 4 // Building that hasn't started construction.
+	DisplayType_nil         DisplayType = 0
+	DisplayType_Visible     DisplayType = 1 // Fully visible
+	DisplayType_Snapshot    DisplayType = 2 // Dimmed version of unit left behind after entering fog of war
+	DisplayType_Hidden      DisplayType = 3 // Fully hidden
+	DisplayType_Placeholder DisplayType = 4 // Building that hasn't started construction.
 )
 
 // Enum value maps for DisplayType.
@@ -79,11 +79,11 @@ func (DisplayType) EnumDescriptor() ([]byte, []int) {
 type Alliance int32
 
 const (
-	Alliance_nil Alliance = 0
-	Alliance_Self         Alliance = 1
-	Alliance_Ally         Alliance = 2
-	Alliance_Neutral      Alliance = 3
-	Alliance_Enemy        Alliance = 4
+	Alliance_nil     Alliance = 0
+	Alliance_Self    Alliance = 1
+	Alliance_Ally    Alliance = 2
+	Alliance_Neutral Alliance = 3
+	Alliance_Enemy   Alliance = 4
 )
 
 // Enum value maps for Alliance.
@@ -187,12 +187,12 @@ func (CloakState) EnumDescriptor() ([]byte, []int) {
 }
 
 type StartRaw struct {
-	MapSize        *Size2DI               `protobuf:"bytes,1,opt,name=map_size,json=mapSize,proto3" json:"map_size,omitempty"`                      // Width and height of the map.
-	PathingGrid    *ImageData             `protobuf:"bytes,2,opt,name=pathing_grid,json=pathingGrid,proto3" json:"pathing_grid,omitempty"`          // 1 bit bitmap of the pathing grid.
-	TerrainHeight  *ImageData             `protobuf:"bytes,3,opt,name=terrain_height,json=terrainHeight,proto3" json:"terrain_height,omitempty"`    // 1 byte bitmap of the terrain height.
-	PlacementGrid  *ImageData             `protobuf:"bytes,4,opt,name=placement_grid,json=placementGrid,proto3" json:"placement_grid,omitempty"`    // 1 bit bitmap of the building placement grid.
-	PlayableArea   *RectangleI            `protobuf:"bytes,5,opt,name=playable_area,json=playableArea,proto3" json:"playable_area,omitempty"`       // The playable cells.
-	StartLocations []*Point2D             `protobuf:"bytes,6,rep,name=start_locations,json=startLocations,proto3" json:"start_locations,omitempty"` // Possible start locations for players.
+	MapSize        *Size2DI    `protobuf:"bytes,1,opt,name=map_size,json=mapSize,proto3" json:"map_size,omitempty"`                      // Width and height of the map.
+	PathingGrid    *ImageData  `protobuf:"bytes,2,opt,name=pathing_grid,json=pathingGrid,proto3" json:"pathing_grid,omitempty"`          // 1 bit bitmap of the pathing grid.
+	TerrainHeight  *ImageData  `protobuf:"bytes,3,opt,name=terrain_height,json=terrainHeight,proto3" json:"terrain_height,omitempty"`    // 1 byte bitmap of the terrain height.
+	PlacementGrid  *ImageData  `protobuf:"bytes,4,opt,name=placement_grid,json=placementGrid,proto3" json:"placement_grid,omitempty"`    // 1 bit bitmap of the building placement grid.
+	PlayableArea   *RectangleI `protobuf:"bytes,5,opt,name=playable_area,json=playableArea,proto3" json:"playable_area,omitempty"`       // The playable cells.
+	StartLocations []*Point2D  `protobuf:"bytes,6,rep,name=start_locations,json=startLocations,proto3" json:"start_locations,omitempty"` // Possible start locations for players.
 }
 
 func (x *StartRaw) Reset() {
@@ -257,12 +257,12 @@ func (x *StartRaw) GetStartLocations() []*Point2D {
 }
 
 type ObservationRaw struct {
-	Player        *PlayerRaw             `protobuf:"bytes,1,opt,name=player,proto3" json:"player,omitempty"`
-	Units         []*Unit                `protobuf:"bytes,2,rep,name=units,proto3" json:"units,omitempty"`
-	MapState      *MapState              `protobuf:"bytes,3,opt,name=map_state,json=mapState,proto3" json:"map_state,omitempty"` // Fog of war, creep and so on. Board stuff that changes per frame.
-	Event         *Event                 `protobuf:"bytes,4,opt,name=event,proto3" json:"event,omitempty"`
-	Effects       []*Effect              `protobuf:"bytes,5,rep,name=effects,proto3" json:"effects,omitempty"`
-	Radar         []*RadarRing           `protobuf:"bytes,6,rep,name=radar,proto3" json:"radar,omitempty"`
+	Player   *PlayerRaw   `protobuf:"bytes,1,opt,name=player,proto3" json:"player,omitempty"`
+	Units    []*Unit      `protobuf:"bytes,2,rep,name=units,proto3" json:"units,omitempty"`
+	MapState *MapState    `protobuf:"bytes,3,opt,name=map_state,json=mapState,proto3" json:"map_state,omitempty"` // Fog of war, creep and so on. Board stuff that changes per frame.
+	Event    *Event       `protobuf:"bytes,4,opt,name=event,proto3" json:"event,omitempty"`
+	Effects  []*Effect    `protobuf:"bytes,5,rep,name=effects,proto3" json:"effects,omitempty"`
+	Radar    []*RadarRing `protobuf:"bytes,6,rep,name=radar,proto3" json:"radar,omitempty"`
 }
 
 func (x *ObservationRaw) Reset() {
@@ -327,8 +327,8 @@ func (x *ObservationRaw) GetRadar() []*RadarRing {
 }
 
 type RadarRing struct {
-	Pos           *Point                 `protobuf:"bytes,1,opt,name=pos,proto3" json:"pos,omitempty"`
-	Radius        float32                `protobuf:"fixed32,2,opt,name=radius,proto3" json:"radius,omitempty"`
+	Pos    *Point  `protobuf:"bytes,1,opt,name=pos,proto3" json:"pos,omitempty"`
+	Radius float32 `protobuf:"fixed32,2,opt,name=radius,proto3" json:"radius,omitempty"`
 }
 
 func (x *RadarRing) Reset() {
@@ -365,9 +365,9 @@ func (x *RadarRing) GetRadius() float32 {
 }
 
 type PowerSource struct {
-	Pos           *Point                 `protobuf:"bytes,1,opt,name=pos,proto3" json:"pos,omitempty"`
-	Radius        float32                `protobuf:"fixed32,2,opt,name=radius,proto3" json:"radius,omitempty"`
-	Tag           UnitTag                 `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"`
+	Pos    *Point  `protobuf:"bytes,1,opt,name=pos,proto3" json:"pos,omitempty"`
+	Radius float32 `protobuf:"fixed32,2,opt,name=radius,proto3" json:"radius,omitempty"`
+	Tag    UnitTag `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"`
 }
 
 func (x *PowerSource) Reset() {
@@ -411,9 +411,9 @@ func (x *PowerSource) GetTag() UnitTag {
 }
 
 type PlayerRaw struct {
-	PowerSources  []*PowerSource         `protobuf:"bytes,1,rep,name=power_sources,json=powerSources,proto3" json:"power_sources,omitempty"`
-	Camera        *Point                 `protobuf:"bytes,2,opt,name=camera,proto3" json:"camera,omitempty"`
-	UpgradeIds    []UpgradeID               `protobuf:"varint,3,rep,packed,name=upgrade_ids,json=upgradeIds,proto3" json:"upgrade_ids,omitempty"` // TODO: Add to UI observation?
+	PowerSources []*PowerSource `protobuf:"bytes,1,rep,name=power_sources,json=powerSources,proto3" json:"power_sources,omitempty"`
+	Camera       *Point         `protobuf:"bytes,2,opt,name=camera,proto3" json:"camera,omitempty"`
+	UpgradeIds   []UpgradeID    `protobuf:"varint,3,rep,packed,name=upgrade_ids,json=upgradeIds,proto3" json:"upgrade_ids,omitempty"` // TODO: Add to UI observation?
 }
 
 func (x *PlayerRaw) Reset() {
@@ -457,13 +457,13 @@ func (x *PlayerRaw) GetUpgradeIds() []UpgradeID {
 }
 
 type UnitOrder struct {
-	AbilityId AbilityID                 `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	AbilityId AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
 	// Types that are valid to be assigned to Target:
 	//
 	//	*UnitOrder_TargetWorldSpacePos
 	//	*UnitOrder_TargetUnitTag
-	Target        isUnitOrder_Target `protobuf_oneof:"target"`
-	Progress      float32            `protobuf:"fixed32,4,opt,name=progress,proto3" json:"progress,omitempty"` // Progress of train abilities. Range: [0.0, 1.0]
+	Target   isUnitOrder_Target `protobuf_oneof:"target"`
+	Progress float32            `protobuf:"fixed32,4,opt,name=progress,proto3" json:"progress,omitempty"` // Progress of train abilities. Range: [0.0, 1.0]
 }
 
 func (x *UnitOrder) Reset() {
@@ -541,14 +541,14 @@ func (*UnitOrder_TargetWorldSpacePos) isUnitOrder_Target() {}
 func (*UnitOrder_TargetUnitTag) isUnitOrder_Target() {}
 
 type PassengerUnit struct {
-	Tag           UnitTag                 `protobuf:"varint,1,opt,name=tag,proto3" json:"tag,omitempty"`
-	Health        float32                `protobuf:"fixed32,2,opt,name=health,proto3" json:"health,omitempty"`
-	HealthMax     float32                `protobuf:"fixed32,3,opt,name=health_max,json=healthMax,proto3" json:"health_max,omitempty"`
-	Shield        float32                `protobuf:"fixed32,4,opt,name=shield,proto3" json:"shield,omitempty"`
-	ShieldMax     float32                `protobuf:"fixed32,7,opt,name=shield_max,json=shieldMax,proto3" json:"shield_max,omitempty"`
-	Energy        float32                `protobuf:"fixed32,5,opt,name=energy,proto3" json:"energy,omitempty"`
-	EnergyMax     float32                `protobuf:"fixed32,8,opt,name=energy_max,json=energyMax,proto3" json:"energy_max,omitempty"`
-	UnitType      UnitTypeID                 `protobuf:"varint,6,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	Tag       UnitTag    `protobuf:"varint,1,opt,name=tag,proto3" json:"tag,omitempty"`
+	Health    float32    `protobuf:"fixed32,2,opt,name=health,proto3" json:"health,omitempty"`
+	HealthMax float32    `protobuf:"fixed32,3,opt,name=health_max,json=healthMax,proto3" json:"health_max,omitempty"`
+	Shield    float32    `protobuf:"fixed32,4,opt,name=shield,proto3" json:"shield,omitempty"`
+	ShieldMax float32    `protobuf:"fixed32,7,opt,name=shield_max,json=shieldMax,proto3" json:"shield_max,omitempty"`
+	Energy    float32    `protobuf:"fixed32,5,opt,name=energy,proto3" json:"energy,omitempty"`
+	EnergyMax float32    `protobuf:"fixed32,8,opt,name=energy_max,json=energyMax,proto3" json:"energy_max,omitempty"`
+	UnitType  UnitTypeID `protobuf:"varint,6,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
 }
 
 func (x *PassengerUnit) Reset() {
@@ -627,8 +627,8 @@ func (x *PassengerUnit) GetUnitType() UnitTypeID {
 }
 
 type RallyTarget struct {
-	Point         *Point                 `protobuf:"bytes,1,opt,name=point,proto3" json:"point,omitempty"` // Will always be filled.
-	Tag           UnitTag                 `protobuf:"varint,2,opt,name=tag,proto3" json:"tag,omitempty"`    // Only if it's targeting a unit.
+	Point *Point  `protobuf:"bytes,1,opt,name=point,proto3" json:"point,omitempty"` // Will always be filled.
+	Tag   UnitTag `protobuf:"varint,2,opt,name=tag,proto3" json:"tag,omitempty"`    // Only if it's targeting a unit.
 }
 
 func (x *RallyTarget) Reset() {
@@ -668,9 +668,9 @@ type Unit struct {
 	// Fields are populated based on type/alliance
 	DisplayType        DisplayType `protobuf:"varint,1,opt,name=display_type,json=displayType,proto3,enum=SC2APIProtocol.DisplayType" json:"display_type,omitempty"`
 	Alliance           Alliance    `protobuf:"varint,2,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
-	Tag                UnitTag      `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"` // Unique identifier for a unit
-	UnitType           UnitTypeID      `protobuf:"varint,4,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	Owner              PlayerID       `protobuf:"varint,5,opt,name=owner,proto3" json:"owner,omitempty"`
+	Tag                UnitTag     `protobuf:"varint,3,opt,name=tag,proto3" json:"tag,omitempty"` // Unique identifier for a unit
+	UnitType           UnitTypeID  `protobuf:"varint,4,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	Owner              PlayerID    `protobuf:"varint,5,opt,name=owner,proto3" json:"owner,omitempty"`
 	Pos                *Point      `protobuf:"bytes,6,opt,name=pos,proto3" json:"pos,omitempty"`
 	Facing             float32     `protobuf:"fixed32,7,opt,name=facing,proto3" json:"facing,omitempty"`
 	Radius             float32     `protobuf:"fixed32,8,opt,name=radius,proto3" json:"radius,omitempty"`
@@ -700,19 +700,19 @@ type Unit struct {
 	IsBurrowed      bool    `protobuf:"varint,21,opt,name=is_burrowed,json=isBurrowed,proto3" json:"is_burrowed,omitempty"`
 	IsHallucination bool    `protobuf:"varint,38,opt,name=is_hallucination,json=isHallucination,proto3" json:"is_hallucination,omitempty"` // Unit is your own or detected as a hallucination.
 	// Not populated for enemies
-	Orders             []*UnitOrder     `protobuf:"bytes,22,rep,name=orders,proto3" json:"orders,omitempty"`
-	AddOnTag           UnitTag           `protobuf:"varint,23,opt,name=add_on_tag,json=addOnTag,proto3" json:"add_on_tag,omitempty"`
-	Passengers         []*PassengerUnit `protobuf:"bytes,24,rep,name=passengers,proto3" json:"passengers,omitempty"`
-	CargoSpaceTaken    int32            `protobuf:"varint,25,opt,name=cargo_space_taken,json=cargoSpaceTaken,proto3" json:"cargo_space_taken,omitempty"`
-	CargoSpaceMax      int32            `protobuf:"varint,26,opt,name=cargo_space_max,json=cargoSpaceMax,proto3" json:"cargo_space_max,omitempty"`
-	AssignedHarvesters int32            `protobuf:"varint,28,opt,name=assigned_harvesters,json=assignedHarvesters,proto3" json:"assigned_harvesters,omitempty"`
-	IdealHarvesters    int32            `protobuf:"varint,29,opt,name=ideal_harvesters,json=idealHarvesters,proto3" json:"ideal_harvesters,omitempty"`
-	WeaponCooldown     float32          `protobuf:"fixed32,30,opt,name=weapon_cooldown,json=weaponCooldown,proto3" json:"weapon_cooldown,omitempty"`
-	EngagedTargetTag   UnitTag           `protobuf:"varint,34,opt,name=engaged_target_tag,json=engagedTargetTag,proto3" json:"engaged_target_tag,omitempty"`
-	BuffDurationRemain int32            `protobuf:"varint,43,opt,name=buff_duration_remain,json=buffDurationRemain,proto3" json:"buff_duration_remain,omitempty"` // How long a buff or unit is still around (eg mule, broodling, chronoboost).
-	BuffDurationMax    int32            `protobuf:"varint,44,opt,name=buff_duration_max,json=buffDurationMax,proto3" json:"buff_duration_max,omitempty"`          // How long the buff or unit is still around (eg mule, broodling, chronoboost).
-	RallyTargets       []*RallyTarget   `protobuf:"bytes,45,rep,name=rally_targets,json=rallyTargets,proto3" json:"rally_targets,omitempty"`
-	Actions []*AvailableAbility // framework field, not serialized
+	Orders             []*UnitOrder        `protobuf:"bytes,22,rep,name=orders,proto3" json:"orders,omitempty"`
+	AddOnTag           UnitTag             `protobuf:"varint,23,opt,name=add_on_tag,json=addOnTag,proto3" json:"add_on_tag,omitempty"`
+	Passengers         []*PassengerUnit    `protobuf:"bytes,24,rep,name=passengers,proto3" json:"passengers,omitempty"`
+	CargoSpaceTaken    int32               `protobuf:"varint,25,opt,name=cargo_space_taken,json=cargoSpaceTaken,proto3" json:"cargo_space_taken,omitempty"`
+	CargoSpaceMax      int32               `protobuf:"varint,26,opt,name=cargo_space_max,json=cargoSpaceMax,proto3" json:"cargo_space_max,omitempty"`
+	AssignedHarvesters int32               `protobuf:"varint,28,opt,name=assigned_harvesters,json=assignedHarvesters,proto3" json:"assigned_harvesters,omitempty"`
+	IdealHarvesters    int32               `protobuf:"varint,29,opt,name=ideal_harvesters,json=idealHarvesters,proto3" json:"ideal_harvesters,omitempty"`
+	WeaponCooldown     float32             `protobuf:"fixed32,30,opt,name=weapon_cooldown,json=weaponCooldown,proto3" json:"weapon_cooldown,omitempty"`
+	EngagedTargetTag   UnitTag             `protobuf:"varint,34,opt,name=engaged_target_tag,json=engagedTargetTag,proto3" json:"engaged_target_tag,omitempty"`
+	BuffDurationRemain int32               `protobuf:"varint,43,opt,name=buff_duration_remain,json=buffDurationRemain,proto3" json:"buff_duration_remain,omitempty"` // How long a buff or unit is still around (eg mule, broodling, chronoboost).
+	BuffDurationMax    int32               `protobuf:"varint,44,opt,name=buff_duration_max,json=buffDurationMax,proto3" json:"buff_duration_max,omitempty"`          // How long the buff or unit is still around (eg mule, broodling, chronoboost).
+	RallyTargets       []*RallyTarget      `protobuf:"bytes,45,rep,name=rally_targets,json=rallyTargets,proto3" json:"rally_targets,omitempty"`
+	Actions            []*AvailableAbility // framework field, not serialized
 }
 
 func (x *Unit) Reset() {
@@ -1043,8 +1043,8 @@ func (x *Unit) GetRallyTargets() []*RallyTarget {
 }
 
 type MapState struct {
-	Visibility    *ImageData             `protobuf:"bytes,1,opt,name=visibility,proto3" json:"visibility,omitempty"` // 1 byte visibility layer.
-	Creep         *ImageData             `protobuf:"bytes,2,opt,name=creep,proto3" json:"creep,omitempty"`           // 1 bit creep layer.
+	Visibility *ImageData `protobuf:"bytes,1,opt,name=visibility,proto3" json:"visibility,omitempty"` // 1 byte visibility layer.
+	Creep      *ImageData `protobuf:"bytes,2,opt,name=creep,proto3" json:"creep,omitempty"`           // 1 bit creep layer.
 }
 
 func (x *MapState) Reset() {
@@ -1081,7 +1081,7 @@ func (x *MapState) GetCreep() *ImageData {
 }
 
 type Event struct {
-	DeadUnits     []UnitTag               `protobuf:"varint,1,rep,packed,name=dead_units,json=deadUnits,proto3" json:"dead_units,omitempty"`
+	DeadUnits []UnitTag `protobuf:"varint,1,rep,packed,name=dead_units,json=deadUnits,proto3" json:"dead_units,omitempty"`
 }
 
 func (x *Event) Reset() {
@@ -1111,11 +1111,11 @@ func (x *Event) GetDeadUnits() []UnitTag {
 }
 
 type Effect struct {
-	EffectId      EffectID                 `protobuf:"varint,1,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
-	Pos           []*Point2D             `protobuf:"bytes,2,rep,name=pos,proto3" json:"pos,omitempty"` // Effect may impact multiple locations. (eg. Lurker attack)
-	Alliance      Alliance               `protobuf:"varint,3,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
-	Owner         PlayerID                  `protobuf:"varint,4,opt,name=owner,proto3" json:"owner,omitempty"`
-	Radius        float32                `protobuf:"fixed32,5,opt,name=radius,proto3" json:"radius,omitempty"`
+	EffectId EffectID   `protobuf:"varint,1,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
+	Pos      []*Point2D `protobuf:"bytes,2,rep,name=pos,proto3" json:"pos,omitempty"` // Effect may impact multiple locations. (eg. Lurker attack)
+	Alliance Alliance   `protobuf:"varint,3,opt,name=alliance,proto3,enum=SC2APIProtocol.Alliance" json:"alliance,omitempty"`
+	Owner    PlayerID   `protobuf:"varint,4,opt,name=owner,proto3" json:"owner,omitempty"`
+	Radius   float32    `protobuf:"fixed32,5,opt,name=radius,proto3" json:"radius,omitempty"`
 }
 
 func (x *Effect) Reset() {
@@ -1178,7 +1178,7 @@ type ActionRaw struct {
 	//	*ActionRaw_UnitCommand
 	//	*ActionRaw_CameraMove
 	//	*ActionRaw_ToggleAutocast
-	Action        isActionRaw_Action `protobuf_oneof:"action"`
+	Action isActionRaw_Action `protobuf_oneof:"action"`
 }
 
 func (x *ActionRaw) Reset() {
@@ -1257,14 +1257,14 @@ func (*ActionRaw_CameraMove) isActionRaw_Action() {}
 func (*ActionRaw_ToggleAutocast) isActionRaw_Action() {}
 
 type ActionRawUnitCommand struct {
-	AbilityId AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	AbilityId AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
 	// Types that are valid to be assigned to Target:
 	//
 	//	*ActionRawUnitCommand_TargetWorldSpacePos
 	//	*ActionRawUnitCommand_TargetUnitTag
-	Target        isActionRawUnitCommand_Target `protobuf_oneof:"target"`
-	UnitTags      []UnitTag                      `protobuf:"varint,4,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
-	QueueCommand  bool                          `protobuf:"varint,5,opt,name=queue_command,json=queueCommand,proto3" json:"queue_command,omitempty"`
+	Target       isActionRawUnitCommand_Target `protobuf_oneof:"target"`
+	UnitTags     []UnitTag                     `protobuf:"varint,4,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
+	QueueCommand bool                          `protobuf:"varint,5,opt,name=queue_command,json=queueCommand,proto3" json:"queue_command,omitempty"`
 }
 
 func (x *ActionRawUnitCommand) Reset() {
@@ -1349,7 +1349,7 @@ func (*ActionRawUnitCommand_TargetWorldSpacePos) isActionRawUnitCommand_Target()
 func (*ActionRawUnitCommand_TargetUnitTag) isActionRawUnitCommand_Target() {}
 
 type ActionRawCameraMove struct {
-	CenterWorldSpace *Point                 `protobuf:"bytes,1,opt,name=center_world_space,json=centerWorldSpace,proto3" json:"center_world_space,omitempty"`
+	CenterWorldSpace *Point `protobuf:"bytes,1,opt,name=center_world_space,json=centerWorldSpace,proto3" json:"center_world_space,omitempty"`
 }
 
 func (x *ActionRawCameraMove) Reset() {
@@ -1379,8 +1379,8 @@ func (x *ActionRawCameraMove) GetCenterWorldSpace() *Point {
 }
 
 type ActionRawToggleAutocast struct {
-	AbilityId     AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	UnitTags      []UnitTag               `protobuf:"varint,2,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
+	AbilityId AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	UnitTags  []UnitTag `protobuf:"varint,2,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
 }
 
 func (x *ActionRawToggleAutocast) Reset() {

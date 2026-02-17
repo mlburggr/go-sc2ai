@@ -24,14 +24,14 @@ const (
 type Status int32
 
 const (
-	Status_nil Status = 0
-	Status_launched   Status = 1  // Game has been launch and is not yet doing anything.
-	Status_init_game  Status = 2  // Create game has been called, and the host is awaiting players.
-	Status_in_game    Status = 3  // In a single or multiplayer game.
-	Status_in_replay  Status = 4  // In a replay.
-	Status_ended      Status = 5  // Game has ended, can still request game info, but ready for a new game.
-	Status_quit       Status = 6  // Application is shutting down.
-	Status_unknown    Status = 99 // Should not happen, but indicates an error if it occurs.
+	Status_nil       Status = 0
+	Status_launched  Status = 1  // Game has been launch and is not yet doing anything.
+	Status_init_game Status = 2  // Create game has been called, and the host is awaiting players.
+	Status_in_game   Status = 3  // In a single or multiplayer game.
+	Status_in_replay Status = 4  // In a replay.
+	Status_ended     Status = 5  // Game has ended, can still request game info, but ready for a new game.
+	Status_quit      Status = 6  // Application is shutting down.
+	Status_unknown   Status = 99 // Should not happen, but indicates an error if it occurs.
 )
 
 // Enum value maps for Status.
@@ -88,17 +88,17 @@ func (Status) EnumDescriptor() ([]byte, []int) {
 type Difficulty int32
 
 const (
-	Difficulty_nil Difficulty = 0
-	Difficulty_VeryEasy       Difficulty = 1
-	Difficulty_Easy           Difficulty = 2
-	Difficulty_Medium         Difficulty = 3
-	Difficulty_MediumHard     Difficulty = 4
-	Difficulty_Hard           Difficulty = 5
-	Difficulty_Harder         Difficulty = 6
-	Difficulty_VeryHard       Difficulty = 7
-	Difficulty_CheatVision    Difficulty = 8
-	Difficulty_CheatMoney     Difficulty = 9
-	Difficulty_CheatInsane    Difficulty = 10
+	Difficulty_nil         Difficulty = 0
+	Difficulty_VeryEasy    Difficulty = 1
+	Difficulty_Easy        Difficulty = 2
+	Difficulty_Medium      Difficulty = 3
+	Difficulty_MediumHard  Difficulty = 4
+	Difficulty_Hard        Difficulty = 5
+	Difficulty_Harder      Difficulty = 6
+	Difficulty_VeryHard    Difficulty = 7
+	Difficulty_CheatVision Difficulty = 8
+	Difficulty_CheatMoney  Difficulty = 9
+	Difficulty_CheatInsane Difficulty = 10
 )
 
 // Enum value maps for Difficulty.
@@ -161,10 +161,10 @@ func (Difficulty) EnumDescriptor() ([]byte, []int) {
 type PlayerType int32
 
 const (
-	PlayerType_nil PlayerType = 0
-	PlayerType_Participant    PlayerType = 1
-	PlayerType_Computer       PlayerType = 2
-	PlayerType_Observer       PlayerType = 3
+	PlayerType_nil         PlayerType = 0
+	PlayerType_Participant PlayerType = 1
+	PlayerType_Computer    PlayerType = 2
+	PlayerType_Observer    PlayerType = 3
 )
 
 // Enum value maps for PlayerType.
@@ -213,7 +213,7 @@ func (PlayerType) EnumDescriptor() ([]byte, []int) {
 type AIBuild int32
 
 const (
-	AIBuild_nil AIBuild = 0
+	AIBuild_nil         AIBuild = 0
 	AIBuild_RandomBuild AIBuild = 1
 	AIBuild_Rush        AIBuild = 2
 	AIBuild_Timing      AIBuild = 3
@@ -274,7 +274,7 @@ func (AIBuild) EnumDescriptor() ([]byte, []int) {
 type Alert int32
 
 const (
-	Alert_nil              Alert = 0
+	Alert_nil                    Alert = 0
 	Alert_AlertError             Alert = 3
 	Alert_AddOnComplete          Alert = 4
 	Alert_BuildingComplete       Alert = 5
@@ -383,11 +383,11 @@ func (Alert) EnumDescriptor() ([]byte, []int) {
 type Result int32
 
 const (
-	Result_nil Result = 0
-	Result_Victory    Result = 1
-	Result_Defeat     Result = 2
-	Result_Tie        Result = 3
-	Result_Undecided  Result = 4
+	Result_nil       Result = 0
+	Result_Victory   Result = 1
+	Result_Defeat    Result = 2
+	Result_Tie       Result = 3
+	Result_Undecided Result = 4
 )
 
 // Enum value maps for Result.
@@ -919,8 +919,8 @@ type Request struct {
 	//	*Request_SaveMap
 	//	*Request_Ping
 	//	*Request_Debug
-	Request       isRequest_Request `protobuf_oneof:"request"`
-	Id            uint32            `protobuf:"varint,97,opt,name=id,proto3" json:"id,omitempty"`
+	Request isRequest_Request `protobuf_oneof:"request"`
+	Id      uint32            `protobuf:"varint,97,opt,name=id,proto3" json:"id,omitempty"`
 }
 
 func (x *Request) Reset() {
@@ -1319,10 +1319,10 @@ type Response struct {
 	//	*Response_MapCommand
 	//	*Response_Ping
 	//	*Response_Debug
-	Response      isResponse_Response `protobuf_oneof:"response"`
-	Id            uint32              `protobuf:"varint,97,opt,name=id,proto3" json:"id,omitempty"`
-	Error         []string            `protobuf:"bytes,98,rep,name=error,proto3" json:"error,omitempty"`                               // If command is missing, this will contain the error. Otherwise this will contain any warnings.
-	Status        Status              `protobuf:"varint,99,opt,name=status,proto3,enum=SC2APIProtocol.Status" json:"status,omitempty"` // Should be sent back with all responses.
+	Response isResponse_Response `protobuf_oneof:"response"`
+	Id       uint32              `protobuf:"varint,97,opt,name=id,proto3" json:"id,omitempty"`
+	Error    []string            `protobuf:"bytes,98,rep,name=error,proto3" json:"error,omitempty"`                               // If command is missing, this will contain the error. Otherwise this will contain any warnings.
+	Status   Status              `protobuf:"varint,99,opt,name=status,proto3,enum=SC2APIProtocol.Status" json:"status,omitempty"` // Should be sent back with all responses.
 }
 
 func (x *Response) Reset() {
@@ -1715,11 +1715,11 @@ type RequestCreateGame struct {
 	//
 	//	*RequestCreateGame_LocalMap
 	//	*RequestCreateGame_BattlenetMapName
-	Map           isRequestCreateGame_Map `protobuf_oneof:"Map"`
-	PlayerSetup   []*PlayerSetup          `protobuf:"bytes,3,rep,name=player_setup,json=playerSetup,proto3" json:"player_setup,omitempty"`
-	DisableFog    bool                    `protobuf:"varint,4,opt,name=disable_fog,json=disableFog,proto3" json:"disable_fog,omitempty"`
-	RandomSeed    uint32                  `protobuf:"varint,5,opt,name=random_seed,json=randomSeed,proto3" json:"random_seed,omitempty"` // Sets the pseudo-random seed for the game.
-	Realtime      bool                    `protobuf:"varint,6,opt,name=realtime,proto3" json:"realtime,omitempty"`                       // If set, the game plays in real time.
+	Map         isRequestCreateGame_Map `protobuf_oneof:"Map"`
+	PlayerSetup []*PlayerSetup          `protobuf:"bytes,3,rep,name=player_setup,json=playerSetup,proto3" json:"player_setup,omitempty"`
+	DisableFog  bool                    `protobuf:"varint,4,opt,name=disable_fog,json=disableFog,proto3" json:"disable_fog,omitempty"`
+	RandomSeed  uint32                  `protobuf:"varint,5,opt,name=random_seed,json=randomSeed,proto3" json:"random_seed,omitempty"` // Sets the pseudo-random seed for the game.
+	Realtime    bool                    `protobuf:"varint,6,opt,name=realtime,proto3" json:"realtime,omitempty"`                       // If set, the game plays in real time.
 }
 
 func (x *RequestCreateGame) Reset() {
@@ -1814,8 +1814,8 @@ type LocalMap struct {
 	// A map can be specified either by a file path or the data of the .SC2Map file.
 	// If you provide both, it will play the game using map_data and store map_path
 	// into the replay. (260 character max)
-	MapPath       string `protobuf:"bytes,1,opt,name=map_path,json=mapPath,proto3" json:"map_path,omitempty"`
-	MapData       []byte `protobuf:"bytes,7,opt,name=map_data,json=mapData,proto3" json:"map_data,omitempty"`
+	MapPath string `protobuf:"bytes,1,opt,name=map_path,json=mapPath,proto3" json:"map_path,omitempty"`
+	MapData []byte `protobuf:"bytes,7,opt,name=map_data,json=mapData,proto3" json:"map_data,omitempty"`
 }
 
 func (x *LocalMap) Reset() {
@@ -1852,8 +1852,8 @@ func (x *LocalMap) GetMapData() []byte {
 }
 
 type ResponseCreateGame struct {
-	Error         ResponseCreateGame_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseCreateGame_Error" json:"error,omitempty"`
-	ErrorDetails  string                   `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	Error        ResponseCreateGame_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseCreateGame_Error" json:"error,omitempty"`
+	ErrorDetails string                   `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
 }
 
 func (x *ResponseCreateGame) Reset() {
@@ -1902,9 +1902,9 @@ type RequestJoinGame struct {
 	ServerPorts   *PortSet                        `protobuf:"bytes,4,opt,name=server_ports,json=serverPorts,proto3" json:"server_ports,omitempty"` // Do not set in the single-player case. This is the port a server will use.
 	ClientPorts   []*PortSet                      `protobuf:"bytes,5,rep,name=client_ports,json=clientPorts,proto3" json:"client_ports,omitempty"` // Do not set in the single-player case. These are the ports clients will use to initialize communication.
 	// Currently only a singe client is supported.
-	SharedPort    int32  `protobuf:"varint,6,opt,name=shared_port,json=sharedPort,proto3" json:"shared_port,omitempty"` // deprecated
-	PlayerName    string `protobuf:"bytes,7,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`  // Use this to set the player's name to something other than autogenerated name.
-	HostIp        string `protobuf:"bytes,8,opt,name=host_ip,json=hostIp,proto3" json:"host_ip,omitempty"`              // Both game creator and joiner should provide the ip address of the game creator in order to play remotely. Defaults to localhost.
+	SharedPort int32  `protobuf:"varint,6,opt,name=shared_port,json=sharedPort,proto3" json:"shared_port,omitempty"` // deprecated
+	PlayerName string `protobuf:"bytes,7,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`  // Use this to set the player's name to something other than autogenerated name.
+	HostIp     string `protobuf:"bytes,8,opt,name=host_ip,json=hostIp,proto3" json:"host_ip,omitempty"`              // Both game creator and joiner should provide the ip address of the game creator in order to play remotely. Defaults to localhost.
 }
 
 func (x *RequestJoinGame) Reset() {
@@ -2010,8 +2010,8 @@ func (*RequestJoinGame_Race) isRequestJoinGame_Participation() {}
 func (*RequestJoinGame_ObservedPlayerId) isRequestJoinGame_Participation() {}
 
 type PortSet struct {
-	GamePort      int32                  `protobuf:"varint,1,opt,name=game_port,json=gamePort,proto3" json:"game_port,omitempty"` // Game right now needs two internal ports to establish a multiplay game on the local host.
-	BasePort      int32                  `protobuf:"varint,2,opt,name=base_port,json=basePort,proto3" json:"base_port,omitempty"`
+	GamePort int32 `protobuf:"varint,1,opt,name=game_port,json=gamePort,proto3" json:"game_port,omitempty"` // Game right now needs two internal ports to establish a multiplay game on the local host.
+	BasePort int32 `protobuf:"varint,2,opt,name=base_port,json=basePort,proto3" json:"base_port,omitempty"`
 }
 
 func (x *PortSet) Reset() {
@@ -2048,9 +2048,9 @@ func (x *PortSet) GetBasePort() int32 {
 }
 
 type ResponseJoinGame struct {
-	PlayerId      PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	Error         ResponseJoinGame_Error `protobuf:"varint,2,opt,name=error,proto3,enum=SC2APIProtocol.ResponseJoinGame_Error" json:"error,omitempty"`
-	ErrorDetails  string                 `protobuf:"bytes,3,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	PlayerId     PlayerID               `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Error        ResponseJoinGame_Error `protobuf:"varint,2,opt,name=error,proto3,enum=SC2APIProtocol.ResponseJoinGame_Error" json:"error,omitempty"`
+	ErrorDetails string                 `protobuf:"bytes,3,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
 }
 
 func (x *ResponseJoinGame) Reset() {
@@ -2171,7 +2171,7 @@ type RequestStartReplay struct {
 	//	*RequestStartReplay_ReplayData
 	Replay           isRequestStartReplay_Replay `protobuf_oneof:"replay"`
 	MapData          []byte                      `protobuf:"bytes,6,opt,name=map_data,json=mapData,proto3" json:"map_data,omitempty"` // Overrides the map path stored in the replay.
-	ObservedPlayerId PlayerID                       `protobuf:"varint,2,opt,name=observed_player_id,json=observedPlayerId,proto3" json:"observed_player_id,omitempty"`
+	ObservedPlayerId PlayerID                    `protobuf:"varint,2,opt,name=observed_player_id,json=observedPlayerId,proto3" json:"observed_player_id,omitempty"`
 	Options          *InterfaceOptions           `protobuf:"bytes,3,opt,name=options,proto3" json:"options,omitempty"`
 	DisableFog       bool                        `protobuf:"varint,4,opt,name=disable_fog,json=disableFog,proto3" json:"disable_fog,omitempty"`
 	Realtime         bool                        `protobuf:"varint,7,opt,name=realtime,proto3" json:"realtime,omitempty"`
@@ -2281,8 +2281,8 @@ func (*RequestStartReplay_ReplayPath) isRequestStartReplay_Replay() {}
 func (*RequestStartReplay_ReplayData) isRequestStartReplay_Replay() {}
 
 type ResponseStartReplay struct {
-	Error         ResponseStartReplay_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseStartReplay_Error" json:"error,omitempty"`
-	ErrorDetails  string                    `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	Error        ResponseStartReplay_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseStartReplay_Error" json:"error,omitempty"`
+	ErrorDetails string                    `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
 }
 
 func (x *ResponseStartReplay) Reset() {
@@ -2320,7 +2320,7 @@ func (x *ResponseStartReplay) GetErrorDetails() string {
 
 // -----------------------------------------------------------------------------
 type RequestMapCommand struct {
-	TriggerCmd    string                 `protobuf:"bytes,1,opt,name=trigger_cmd,json=triggerCmd,proto3" json:"trigger_cmd,omitempty"`
+	TriggerCmd string `protobuf:"bytes,1,opt,name=trigger_cmd,json=triggerCmd,proto3" json:"trigger_cmd,omitempty"`
 }
 
 func (x *RequestMapCommand) Reset() {
@@ -2350,8 +2350,8 @@ func (x *RequestMapCommand) GetTriggerCmd() string {
 }
 
 type ResponseMapCommand struct {
-	Error         ResponseMapCommand_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseMapCommand_Error" json:"error,omitempty"`
-	ErrorDetails  string                   `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
+	Error        ResponseMapCommand_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseMapCommand_Error" json:"error,omitempty"`
+	ErrorDetails string                   `protobuf:"bytes,2,opt,name=error_details,json=errorDetails,proto3" json:"error_details,omitempty"`
 }
 
 func (x *ResponseMapCommand) Reset() {
@@ -2593,12 +2593,12 @@ func (*RequestGameInfo) Descriptor() ([]byte, []int) {
 }
 
 type ResponseGameInfo struct {
-	MapName       string                 `protobuf:"bytes,1,opt,name=map_name,json=mapName,proto3" json:"map_name,omitempty"`
-	ModNames      []string               `protobuf:"bytes,6,rep,name=mod_names,json=modNames,proto3" json:"mod_names,omitempty"`
-	LocalMapPath  string                 `protobuf:"bytes,2,opt,name=local_map_path,json=localMapPath,proto3" json:"local_map_path,omitempty"`
-	PlayerInfo    []*PlayerInfo          `protobuf:"bytes,3,rep,name=player_info,json=playerInfo,proto3" json:"player_info,omitempty"`
-	StartRaw      *StartRaw              `protobuf:"bytes,4,opt,name=start_raw,json=startRaw,proto3" json:"start_raw,omitempty"` // Populated if Raw interface is enabled.
-	Options       *InterfaceOptions      `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
+	MapName      string            `protobuf:"bytes,1,opt,name=map_name,json=mapName,proto3" json:"map_name,omitempty"`
+	ModNames     []string          `protobuf:"bytes,6,rep,name=mod_names,json=modNames,proto3" json:"mod_names,omitempty"`
+	LocalMapPath string            `protobuf:"bytes,2,opt,name=local_map_path,json=localMapPath,proto3" json:"local_map_path,omitempty"`
+	PlayerInfo   []*PlayerInfo     `protobuf:"bytes,3,rep,name=player_info,json=playerInfo,proto3" json:"player_info,omitempty"`
+	StartRaw     *StartRaw         `protobuf:"bytes,4,opt,name=start_raw,json=startRaw,proto3" json:"start_raw,omitempty"` // Populated if Raw interface is enabled.
+	Options      *InterfaceOptions `protobuf:"bytes,5,opt,name=options,proto3" json:"options,omitempty"`
 }
 
 func (x *ResponseGameInfo) Reset() {
@@ -2664,8 +2664,8 @@ func (x *ResponseGameInfo) GetOptions() *InterfaceOptions {
 
 // -----------------------------------------------------------------------------
 type RequestObservation struct {
-	DisableFog    bool                   `protobuf:"varint,1,opt,name=disable_fog,json=disableFog,proto3" json:"disable_fog,omitempty"`
-	GameLoop      uint32                 `protobuf:"varint,2,opt,name=game_loop,json=gameLoop,proto3" json:"game_loop,omitempty"` // In realtime the request will only return once the simulation game loop has reached this value. When not realtime this value is ignored.
+	DisableFog bool   `protobuf:"varint,1,opt,name=disable_fog,json=disableFog,proto3" json:"disable_fog,omitempty"`
+	GameLoop   uint32 `protobuf:"varint,2,opt,name=game_loop,json=gameLoop,proto3" json:"game_loop,omitempty"` // In realtime the request will only return once the simulation game loop has reached this value. When not realtime this value is ignored.
 }
 
 func (x *RequestObservation) Reset() {
@@ -2702,11 +2702,11 @@ func (x *RequestObservation) GetGameLoop() uint32 {
 }
 
 type ResponseObservation struct {
-	Actions       []*Action              `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`                               // Actions this player did since the last Observation.
-	ActionErrors  []*ActionError         `protobuf:"bytes,2,rep,name=action_errors,json=actionErrors,proto3" json:"action_errors,omitempty"` // Equivalent of UI "red text" errors.
-	Observation   *Observation           `protobuf:"bytes,3,opt,name=observation,proto3" json:"observation,omitempty"`
-	PlayerResult  []*PlayerResult        `protobuf:"bytes,4,rep,name=player_result,json=playerResult,proto3" json:"player_result,omitempty"` // Only populated if the game ended during this step.
-	Chat          []*ChatReceived        `protobuf:"bytes,5,rep,name=chat,proto3" json:"chat,omitempty"`
+	Actions      []*Action       `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`                               // Actions this player did since the last Observation.
+	ActionErrors []*ActionError  `protobuf:"bytes,2,rep,name=action_errors,json=actionErrors,proto3" json:"action_errors,omitempty"` // Equivalent of UI "red text" errors.
+	Observation  *Observation    `protobuf:"bytes,3,opt,name=observation,proto3" json:"observation,omitempty"`
+	PlayerResult []*PlayerResult `protobuf:"bytes,4,rep,name=player_result,json=playerResult,proto3" json:"player_result,omitempty"` // Only populated if the game ended during this step.
+	Chat         []*ChatReceived `protobuf:"bytes,5,rep,name=chat,proto3" json:"chat,omitempty"`
 }
 
 func (x *ResponseObservation) Reset() {
@@ -2764,8 +2764,8 @@ func (x *ResponseObservation) GetChat() []*ChatReceived {
 }
 
 type ChatReceived struct {
-	PlayerId      PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	PlayerId PlayerID `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Message  string   `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 }
 
 func (x *ChatReceived) Reset() {
@@ -2803,7 +2803,7 @@ func (x *ChatReceived) GetMessage() string {
 
 // -----------------------------------------------------------------------------
 type RequestAction struct {
-	Actions       []*Action              `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`
+	Actions []*Action `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`
 }
 
 func (x *RequestAction) Reset() {
@@ -2833,7 +2833,7 @@ func (x *RequestAction) GetActions() []*Action {
 }
 
 type ResponseAction struct {
-	Result        []ActionResult         `protobuf:"varint,1,rep,packed,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
+	Result []ActionResult `protobuf:"varint,1,rep,packed,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
 }
 
 func (x *ResponseAction) Reset() {
@@ -2864,7 +2864,7 @@ func (x *ResponseAction) GetResult() []ActionResult {
 
 // -----------------------------------------------------------------------------
 type RequestObserverAction struct {
-	Actions       []*ObserverAction      `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`
+	Actions []*ObserverAction `protobuf:"bytes,1,rep,name=actions,proto3" json:"actions,omitempty"`
 }
 
 func (x *RequestObserverAction) Reset() {
@@ -2917,7 +2917,7 @@ func (*ResponseObserverAction) Descriptor() ([]byte, []int) {
 
 // -----------------------------------------------------------------------------
 type RequestStep struct {
-	Count         uint32                 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"` // Number of game loops to simulate for the next frame.
+	Count uint32 `protobuf:"varint,1,opt,name=count,proto3" json:"count,omitempty"` // Number of game loops to simulate for the next frame.
 }
 
 func (x *RequestStep) Reset() {
@@ -2982,11 +2982,11 @@ func (x *ResponseStep) GetSimulationLoop() uint32 {
 
 // -----------------------------------------------------------------------------
 type RequestData struct {
-	AbilityId     bool                   `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	UnitTypeId    bool                   `protobuf:"varint,2,opt,name=unit_type_id,json=unitTypeId,proto3" json:"unit_type_id,omitempty"`
-	UpgradeId     bool                   `protobuf:"varint,3,opt,name=upgrade_id,json=upgradeId,proto3" json:"upgrade_id,omitempty"`
-	BuffId        bool                   `protobuf:"varint,4,opt,name=buff_id,json=buffId,proto3" json:"buff_id,omitempty"`
-	EffectId      bool                   `protobuf:"varint,5,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
+	AbilityId  bool `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	UnitTypeId bool `protobuf:"varint,2,opt,name=unit_type_id,json=unitTypeId,proto3" json:"unit_type_id,omitempty"`
+	UpgradeId  bool `protobuf:"varint,3,opt,name=upgrade_id,json=upgradeId,proto3" json:"upgrade_id,omitempty"`
+	BuffId     bool `protobuf:"varint,4,opt,name=buff_id,json=buffId,proto3" json:"buff_id,omitempty"`
+	EffectId   bool `protobuf:"varint,5,opt,name=effect_id,json=effectId,proto3" json:"effect_id,omitempty"`
 }
 
 func (x *RequestData) Reset() {
@@ -3044,11 +3044,11 @@ func (x *RequestData) GetEffectId() bool {
 }
 
 type ResponseData struct {
-	Abilities     []*AbilityData         `protobuf:"bytes,1,rep,name=abilities,proto3" json:"abilities,omitempty"`
-	Units         []*UnitTypeData        `protobuf:"bytes,2,rep,name=units,proto3" json:"units,omitempty"`
-	Upgrades      []*UpgradeData         `protobuf:"bytes,3,rep,name=upgrades,proto3" json:"upgrades,omitempty"`
-	Buffs         []*BuffData            `protobuf:"bytes,4,rep,name=buffs,proto3" json:"buffs,omitempty"`
-	Effects       []*EffectData          `protobuf:"bytes,5,rep,name=effects,proto3" json:"effects,omitempty"`
+	Abilities []*AbilityData  `protobuf:"bytes,1,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	Units     []*UnitTypeData `protobuf:"bytes,2,rep,name=units,proto3" json:"units,omitempty"`
+	Upgrades  []*UpgradeData  `protobuf:"bytes,3,rep,name=upgrades,proto3" json:"upgrades,omitempty"`
+	Buffs     []*BuffData     `protobuf:"bytes,4,rep,name=buffs,proto3" json:"buffs,omitempty"`
+	Effects   []*EffectData   `protobuf:"bytes,5,rep,name=effects,proto3" json:"effects,omitempty"`
 }
 
 func (x *ResponseData) Reset() {
@@ -3129,7 +3129,7 @@ func (*RequestSaveReplay) Descriptor() ([]byte, []int) {
 }
 
 type ResponseSaveReplay struct {
-	Data          []byte                 `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
+	Data []byte `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *ResponseSaveReplay) Reset() {
@@ -3164,8 +3164,8 @@ type RequestReplayInfo struct {
 	//
 	//	*RequestReplayInfo_ReplayPath
 	//	*RequestReplayInfo_ReplayData
-	Replay        isRequestReplayInfo_Replay `protobuf_oneof:"replay"`
-	DownloadData  bool                       `protobuf:"varint,3,opt,name=download_data,json=downloadData,proto3" json:"download_data,omitempty"` // Ensure the data and binary are downloaded if this is an old version replay.
+	Replay       isRequestReplayInfo_Replay `protobuf_oneof:"replay"`
+	DownloadData bool                       `protobuf:"varint,3,opt,name=download_data,json=downloadData,proto3" json:"download_data,omitempty"` // Ensure the data and binary are downloaded if this is an old version replay.
 }
 
 func (x *RequestReplayInfo) Reset() {
@@ -3236,10 +3236,10 @@ func (*RequestReplayInfo_ReplayPath) isRequestReplayInfo_Replay() {}
 func (*RequestReplayInfo_ReplayData) isRequestReplayInfo_Replay() {}
 
 type PlayerInfoExtra struct {
-	PlayerInfo    *PlayerInfo            `protobuf:"bytes,1,opt,name=player_info,json=playerInfo,proto3" json:"player_info,omitempty"`
-	PlayerResult  *PlayerResult          `protobuf:"bytes,2,opt,name=player_result,json=playerResult,proto3" json:"player_result,omitempty"`
-	PlayerMmr     int32                  `protobuf:"varint,3,opt,name=player_mmr,json=playerMmr,proto3" json:"player_mmr,omitempty"`
-	PlayerApm     int32                  `protobuf:"varint,4,opt,name=player_apm,json=playerApm,proto3" json:"player_apm,omitempty"`
+	PlayerInfo   *PlayerInfo   `protobuf:"bytes,1,opt,name=player_info,json=playerInfo,proto3" json:"player_info,omitempty"`
+	PlayerResult *PlayerResult `protobuf:"bytes,2,opt,name=player_result,json=playerResult,proto3" json:"player_result,omitempty"`
+	PlayerMmr    int32         `protobuf:"varint,3,opt,name=player_mmr,json=playerMmr,proto3" json:"player_mmr,omitempty"`
+	PlayerApm    int32         `protobuf:"varint,4,opt,name=player_apm,json=playerApm,proto3" json:"player_apm,omitempty"`
 }
 
 func (x *PlayerInfoExtra) Reset() {
@@ -3426,8 +3426,8 @@ func (*RequestAvailableMaps) Descriptor() ([]byte, []int) {
 // To download all ladder maps, log in and queue into a ladder match.
 // To download any other map, play a custom game on that map.
 type ResponseAvailableMaps struct {
-	LocalMapPaths     []string               `protobuf:"bytes,1,rep,name=local_map_paths,json=localMapPaths,proto3" json:"local_map_paths,omitempty"`             // All the maps in the "Maps/" directory.
-	BattlenetMapNames []string               `protobuf:"bytes,2,rep,name=battlenet_map_names,json=battlenetMapNames,proto3" json:"battlenet_map_names,omitempty"` // All the maps in the BattleNet cache.
+	LocalMapPaths     []string `protobuf:"bytes,1,rep,name=local_map_paths,json=localMapPaths,proto3" json:"local_map_paths,omitempty"`             // All the maps in the "Maps/" directory.
+	BattlenetMapNames []string `protobuf:"bytes,2,rep,name=battlenet_map_names,json=battlenetMapNames,proto3" json:"battlenet_map_names,omitempty"` // All the maps in the BattleNet cache.
 }
 
 func (x *ResponseAvailableMaps) Reset() {
@@ -3466,8 +3466,8 @@ func (x *ResponseAvailableMaps) GetBattlenetMapNames() []string {
 // -----------------------------------------------------------------------------
 // Copies map data into the path specified.
 type RequestSaveMap struct {
-	MapPath       string                 `protobuf:"bytes,1,opt,name=map_path,json=mapPath,proto3" json:"map_path,omitempty"` // Path the game process will write to, relative to the temp directory. (260 character max)
-	MapData       []byte                 `protobuf:"bytes,2,opt,name=map_data,json=mapData,proto3" json:"map_data,omitempty"` // Binary map data of a .SC2Map.
+	MapPath string `protobuf:"bytes,1,opt,name=map_path,json=mapPath,proto3" json:"map_path,omitempty"` // Path the game process will write to, relative to the temp directory. (260 character max)
+	MapData []byte `protobuf:"bytes,2,opt,name=map_data,json=mapData,proto3" json:"map_data,omitempty"` // Binary map data of a .SC2Map.
 }
 
 func (x *RequestSaveMap) Reset() {
@@ -3504,7 +3504,7 @@ func (x *RequestSaveMap) GetMapData() []byte {
 }
 
 type ResponseSaveMap struct {
-	Error         ResponseSaveMap_Error  `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseSaveMap_Error" json:"error,omitempty"`
+	Error ResponseSaveMap_Error `protobuf:"varint,1,opt,name=error,proto3,enum=SC2APIProtocol.ResponseSaveMap_Error" json:"error,omitempty"`
 }
 
 func (x *ResponseSaveMap) Reset() {
@@ -3557,10 +3557,10 @@ func (*RequestPing) Descriptor() ([]byte, []int) {
 }
 
 type ResponsePing struct {
-	GameVersion   string                 `protobuf:"bytes,1,opt,name=game_version,json=gameVersion,proto3" json:"game_version,omitempty"`
-	DataVersion   string                 `protobuf:"bytes,2,opt,name=data_version,json=dataVersion,proto3" json:"data_version,omitempty"`
-	DataBuild     uint32                 `protobuf:"varint,3,opt,name=data_build,json=dataBuild,proto3" json:"data_build,omitempty"`
-	BaseBuild     uint32                 `protobuf:"varint,4,opt,name=base_build,json=baseBuild,proto3" json:"base_build,omitempty"`
+	GameVersion string `protobuf:"bytes,1,opt,name=game_version,json=gameVersion,proto3" json:"game_version,omitempty"`
+	DataVersion string `protobuf:"bytes,2,opt,name=data_version,json=dataVersion,proto3" json:"data_version,omitempty"`
+	DataBuild   uint32 `protobuf:"varint,3,opt,name=data_build,json=dataBuild,proto3" json:"data_build,omitempty"`
+	BaseBuild   uint32 `protobuf:"varint,4,opt,name=base_build,json=baseBuild,proto3" json:"base_build,omitempty"`
 }
 
 func (x *ResponsePing) Reset() {
@@ -3612,7 +3612,7 @@ func (x *ResponsePing) GetBaseBuild() uint32 {
 
 // -----------------------------------------------------------------------------
 type RequestDebug struct {
-	Debug         []*DebugCommand        `protobuf:"bytes,1,rep,name=debug,proto3" json:"debug,omitempty"`
+	Debug []*DebugCommand `protobuf:"bytes,1,rep,name=debug,proto3" json:"debug,omitempty"`
 }
 
 func (x *RequestDebug) Reset() {
@@ -3664,12 +3664,12 @@ func (*ResponseDebug) Descriptor() ([]byte, []int) {
 }
 
 type PlayerSetup struct {
-	Type  PlayerType             `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.PlayerType" json:"type,omitempty"`
+	Type PlayerType `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.PlayerType" json:"type,omitempty"`
 	// Only used for a computer player.
-	Race          Race       `protobuf:"varint,2,opt,name=race,proto3,enum=SC2APIProtocol.Race" json:"race,omitempty"`
-	Difficulty    Difficulty `protobuf:"varint,3,opt,name=difficulty,proto3,enum=SC2APIProtocol.Difficulty" json:"difficulty,omitempty"`
-	PlayerName    string     `protobuf:"bytes,4,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
-	AiBuild       AIBuild    `protobuf:"varint,5,opt,name=ai_build,json=aiBuild,proto3,enum=SC2APIProtocol.AIBuild" json:"ai_build,omitempty"`
+	Race       Race       `protobuf:"varint,2,opt,name=race,proto3,enum=SC2APIProtocol.Race" json:"race,omitempty"`
+	Difficulty Difficulty `protobuf:"varint,3,opt,name=difficulty,proto3,enum=SC2APIProtocol.Difficulty" json:"difficulty,omitempty"`
+	PlayerName string     `protobuf:"bytes,4,opt,name=player_name,json=playerName,proto3" json:"player_name,omitempty"`
+	AiBuild    AIBuild    `protobuf:"varint,5,opt,name=ai_build,json=aiBuild,proto3,enum=SC2APIProtocol.AIBuild" json:"ai_build,omitempty"`
 }
 
 func (x *PlayerSetup) Reset() {
@@ -3727,8 +3727,8 @@ func (x *PlayerSetup) GetAiBuild() AIBuild {
 }
 
 type SpatialCameraSetup struct {
-	Resolution        *Size2DI               `protobuf:"bytes,2,opt,name=resolution,proto3" json:"resolution,omitempty"`
-	MinimapResolution *Size2DI               `protobuf:"bytes,3,opt,name=minimap_resolution,json=minimapResolution,proto3" json:"minimap_resolution,omitempty"`
+	Resolution        *Size2DI `protobuf:"bytes,2,opt,name=resolution,proto3" json:"resolution,omitempty"`
+	MinimapResolution *Size2DI `protobuf:"bytes,3,opt,name=minimap_resolution,json=minimapResolution,proto3" json:"minimap_resolution,omitempty"`
 	// Below are only relevant for feature layers.
 	Width               float32 `protobuf:"fixed32,1,opt,name=width,proto3" json:"width,omitempty"`                                                         // Set the screen camera width in world units.
 	CropToPlayableArea  bool    `protobuf:"varint,4,opt,name=crop_to_playable_area,json=cropToPlayableArea,proto3" json:"crop_to_playable_area,omitempty"`  // Crop minimap to the playable area.
@@ -3894,7 +3894,7 @@ func (x *InterfaceOptions) GetRawCropToPlayableArea() bool {
 type PlayerInfo struct {
 	// Identifier that will be used to reference this player.
 	// SC2 will always assign playerIds starting from 1 in standard Melee maps. This may not be true in custom maps.
-	PlayerId      PlayerID     `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	PlayerId      PlayerID   `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
 	Type          PlayerType `protobuf:"varint,2,opt,name=type,proto3,enum=SC2APIProtocol.PlayerType" json:"type,omitempty"`
 	RaceRequested Race       `protobuf:"varint,3,opt,name=race_requested,json=raceRequested,proto3,enum=SC2APIProtocol.Race" json:"race_requested,omitempty"`
 	RaceActual    Race       `protobuf:"varint,4,opt,name=race_actual,json=raceActual,proto3,enum=SC2APIProtocol.Race" json:"race_actual,omitempty"` // Only populated for your player or when watching replay
@@ -3972,17 +3972,17 @@ func (x *PlayerInfo) GetPlayerName() string {
 }
 
 type PlayerCommon struct {
-	PlayerId        PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	Minerals        uint32                 `protobuf:"varint,2,opt,name=minerals,proto3" json:"minerals,omitempty"`
-	Vespene         uint32                 `protobuf:"varint,3,opt,name=vespene,proto3" json:"vespene,omitempty"`
-	FoodCap         uint32                 `protobuf:"varint,4,opt,name=food_cap,json=foodCap,proto3" json:"food_cap,omitempty"`
-	FoodUsed        uint32                 `protobuf:"varint,5,opt,name=food_used,json=foodUsed,proto3" json:"food_used,omitempty"`
-	FoodArmy        uint32                 `protobuf:"varint,6,opt,name=food_army,json=foodArmy,proto3" json:"food_army,omitempty"`
-	FoodWorkers     uint32                 `protobuf:"varint,7,opt,name=food_workers,json=foodWorkers,proto3" json:"food_workers,omitempty"`
-	IdleWorkerCount uint32                 `protobuf:"varint,8,opt,name=idle_worker_count,json=idleWorkerCount,proto3" json:"idle_worker_count,omitempty"`
-	ArmyCount       uint32                 `protobuf:"varint,9,opt,name=army_count,json=armyCount,proto3" json:"army_count,omitempty"`
-	WarpGateCount   uint32                 `protobuf:"varint,10,opt,name=warp_gate_count,json=warpGateCount,proto3" json:"warp_gate_count,omitempty"`
-	LarvaCount      uint32                 `protobuf:"varint,11,opt,name=larva_count,json=larvaCount,proto3" json:"larva_count,omitempty"`
+	PlayerId        PlayerID `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Minerals        uint32   `protobuf:"varint,2,opt,name=minerals,proto3" json:"minerals,omitempty"`
+	Vespene         uint32   `protobuf:"varint,3,opt,name=vespene,proto3" json:"vespene,omitempty"`
+	FoodCap         uint32   `protobuf:"varint,4,opt,name=food_cap,json=foodCap,proto3" json:"food_cap,omitempty"`
+	FoodUsed        uint32   `protobuf:"varint,5,opt,name=food_used,json=foodUsed,proto3" json:"food_used,omitempty"`
+	FoodArmy        uint32   `protobuf:"varint,6,opt,name=food_army,json=foodArmy,proto3" json:"food_army,omitempty"`
+	FoodWorkers     uint32   `protobuf:"varint,7,opt,name=food_workers,json=foodWorkers,proto3" json:"food_workers,omitempty"`
+	IdleWorkerCount uint32   `protobuf:"varint,8,opt,name=idle_worker_count,json=idleWorkerCount,proto3" json:"idle_worker_count,omitempty"`
+	ArmyCount       uint32   `protobuf:"varint,9,opt,name=army_count,json=armyCount,proto3" json:"army_count,omitempty"`
+	WarpGateCount   uint32   `protobuf:"varint,10,opt,name=warp_gate_count,json=warpGateCount,proto3" json:"warp_gate_count,omitempty"`
+	LarvaCount      uint32   `protobuf:"varint,11,opt,name=larva_count,json=larvaCount,proto3" json:"larva_count,omitempty"`
 }
 
 func (x *PlayerCommon) Reset() {
@@ -4176,12 +4176,12 @@ func (x *Observation) GetUiData() *ObservationUI {
 }
 
 type Action struct {
-	ActionRaw          *ActionRaw             `protobuf:"bytes,1,opt,name=action_raw,json=actionRaw,proto3" json:"action_raw,omitempty"`                              // Populated if Raw interface is enabled.
-	ActionFeatureLayer *ActionSpatial         `protobuf:"bytes,2,opt,name=action_feature_layer,json=actionFeatureLayer,proto3" json:"action_feature_layer,omitempty"` // Populated if Feature Layer interface is enabled.
-	ActionRender       *ActionSpatial         `protobuf:"bytes,3,opt,name=action_render,json=actionRender,proto3" json:"action_render,omitempty"`                     // Not implemented. Populated if Render interface is enabled.
-	ActionUi           *ActionUI              `protobuf:"bytes,4,opt,name=action_ui,json=actionUi,proto3" json:"action_ui,omitempty"`                                 // Populated if Feature Layer or Render interface is enabled.
-	ActionChat         *ActionChat            `protobuf:"bytes,6,opt,name=action_chat,json=actionChat,proto3" json:"action_chat,omitempty"`                           // Chat messages as a player typing into the chat channel.
-	GameLoop           uint32                 `protobuf:"varint,7,opt,name=game_loop,json=gameLoop,proto3" json:"game_loop,omitempty"`                                // Populated for actions in ResponseObservation. The game loop on which the action was executed.
+	ActionRaw          *ActionRaw     `protobuf:"bytes,1,opt,name=action_raw,json=actionRaw,proto3" json:"action_raw,omitempty"`                              // Populated if Raw interface is enabled.
+	ActionFeatureLayer *ActionSpatial `protobuf:"bytes,2,opt,name=action_feature_layer,json=actionFeatureLayer,proto3" json:"action_feature_layer,omitempty"` // Populated if Feature Layer interface is enabled.
+	ActionRender       *ActionSpatial `protobuf:"bytes,3,opt,name=action_render,json=actionRender,proto3" json:"action_render,omitempty"`                     // Not implemented. Populated if Render interface is enabled.
+	ActionUi           *ActionUI      `protobuf:"bytes,4,opt,name=action_ui,json=actionUi,proto3" json:"action_ui,omitempty"`                                 // Populated if Feature Layer or Render interface is enabled.
+	ActionChat         *ActionChat    `protobuf:"bytes,6,opt,name=action_chat,json=actionChat,proto3" json:"action_chat,omitempty"`                           // Chat messages as a player typing into the chat channel.
+	GameLoop           uint32         `protobuf:"varint,7,opt,name=game_loop,json=gameLoop,proto3" json:"game_loop,omitempty"`                                // Populated for actions in ResponseObservation. The game loop on which the action was executed.
 }
 
 func (x *Action) Reset() {
@@ -4246,8 +4246,8 @@ func (x *Action) GetGameLoop() uint32 {
 }
 
 type ActionChat struct {
-	Channel       ActionChat_Channel     `protobuf:"varint,1,opt,name=channel,proto3,enum=SC2APIProtocol.ActionChat_Channel" json:"channel,omitempty"`
-	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Channel ActionChat_Channel `protobuf:"varint,1,opt,name=channel,proto3,enum=SC2APIProtocol.ActionChat_Channel" json:"channel,omitempty"`
+	Message string             `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
 }
 
 func (x *ActionChat) Reset() {
@@ -4284,9 +4284,9 @@ func (x *ActionChat) GetMessage() string {
 }
 
 type ActionError struct {
-	UnitTag       UnitTag                 `protobuf:"varint,1,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"` // Only populated when using raw interface.
-	AbilityId     AbilityID                 `protobuf:"varint,2,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	Result        ActionResult           `protobuf:"varint,3,opt,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
+	UnitTag   UnitTag      `protobuf:"varint,1,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"` // Only populated when using raw interface.
+	AbilityId AbilityID    `protobuf:"varint,2,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	Result    ActionResult `protobuf:"varint,3,opt,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
 }
 
 func (x *ActionError) Reset() {
@@ -4336,7 +4336,7 @@ type ObserverAction struct {
 	//	*ObserverAction_CameraMove
 	//	*ObserverAction_CameraFollowPlayer
 	//	*ObserverAction_CameraFollowUnits
-	Action        isObserverAction_Action `protobuf_oneof:"action"`
+	Action isObserverAction_Action `protobuf_oneof:"action"`
 }
 
 func (x *ObserverAction) Reset() {
@@ -4430,7 +4430,7 @@ func (*ObserverAction_CameraFollowPlayer) isObserverAction_Action() {}
 func (*ObserverAction_CameraFollowUnits) isObserverAction_Action() {}
 
 type ActionObserverPlayerPerspective struct {
-	PlayerId      PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"` // 0 to observe "Everyone"
+	PlayerId PlayerID `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"` // 0 to observe "Everyone"
 }
 
 func (x *ActionObserverPlayerPerspective) Reset() {
@@ -4460,10 +4460,10 @@ func (x *ActionObserverPlayerPerspective) GetPlayerId() PlayerID {
 }
 
 type ActionObserverCameraMove struct {
-	WorldPos *Point2D               `protobuf:"bytes,1,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`
+	WorldPos *Point2D `protobuf:"bytes,1,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`
 	// Distance between camera and terrain. Larger value zooms out camera.
 	// Defaults to standard camera distance if set to 0.
-	Distance      float32 `protobuf:"fixed32,2,opt,name=distance,proto3" json:"distance,omitempty"`
+	Distance float32 `protobuf:"fixed32,2,opt,name=distance,proto3" json:"distance,omitempty"`
 }
 
 func (x *ActionObserverCameraMove) Reset() {
@@ -4500,7 +4500,7 @@ func (x *ActionObserverCameraMove) GetDistance() float32 {
 }
 
 type ActionObserverCameraFollowPlayer struct {
-	PlayerId      PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"` // Not implemented. Value must be [1, 15]
+	PlayerId PlayerID `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"` // Not implemented. Value must be [1, 15]
 }
 
 func (x *ActionObserverCameraFollowPlayer) Reset() {
@@ -4530,7 +4530,7 @@ func (x *ActionObserverCameraFollowPlayer) GetPlayerId() PlayerID {
 }
 
 type ActionObserverCameraFollowUnits struct {
-	UnitTags      []UnitTag               `protobuf:"varint,1,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
+	UnitTags []UnitTag `protobuf:"varint,1,rep,packed,name=unit_tags,json=unitTags,proto3" json:"unit_tags,omitempty"`
 }
 
 func (x *ActionObserverCameraFollowUnits) Reset() {
@@ -4560,8 +4560,8 @@ func (x *ActionObserverCameraFollowUnits) GetUnitTags() []UnitTag {
 }
 
 type PlayerResult struct {
-	PlayerId      PlayerID                 `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
-	Result        Result                 `protobuf:"varint,2,opt,name=result,proto3,enum=SC2APIProtocol.Result" json:"result,omitempty"`
+	PlayerId PlayerID `protobuf:"varint,1,opt,name=player_id,json=playerId,proto3" json:"player_id,omitempty"`
+	Result   Result   `protobuf:"varint,2,opt,name=result,proto3,enum=SC2APIProtocol.Result" json:"result,omitempty"`
 }
 
 func (x *PlayerResult) Reset() {

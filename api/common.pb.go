@@ -77,8 +77,8 @@ func (Race) EnumDescriptor() ([]byte, []int) {
 }
 
 type AvailableAbility struct {
-	AbilityId     AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	RequiresPoint bool                   `protobuf:"varint,2,opt,name=requires_point,json=requiresPoint,proto3" json:"requires_point,omitempty"`
+	AbilityId     AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	RequiresPoint bool      `protobuf:"varint,2,opt,name=requires_point,json=requiresPoint,proto3" json:"requires_point,omitempty"`
 }
 
 func (x *AvailableAbility) Reset() {
@@ -115,9 +115,9 @@ func (x *AvailableAbility) GetRequiresPoint() bool {
 }
 
 type ImageData struct {
-	BitsPerPixel  int32                  `protobuf:"varint,1,opt,name=bits_per_pixel,json=bitsPerPixel,proto3" json:"bits_per_pixel,omitempty"` // Number of bits per pixel; 8 bits for a byte etc.
-	Size          *Size2DI               `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`                                        // Dimension in pixels.
-	Data          []byte                 `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`                                        // Binary data; the size of this buffer in bytes is width * height * bits_per_pixel / 8.
+	BitsPerPixel int32    `protobuf:"varint,1,opt,name=bits_per_pixel,json=bitsPerPixel,proto3" json:"bits_per_pixel,omitempty"` // Number of bits per pixel; 8 bits for a byte etc.
+	Size         *Size2DI `protobuf:"bytes,2,opt,name=size,proto3" json:"size,omitempty"`                                        // Dimension in pixels.
+	Data         []byte   `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`                                        // Binary data; the size of this buffer in bytes is width * height * bits_per_pixel / 8.
 }
 
 func (x *ImageData) Reset() {
@@ -163,8 +163,8 @@ func (x *ImageData) GetData() []byte {
 // Point on the screen/minimap (e.g., 0..64).
 // Note: bottom left of the screen is 0, 0.
 type PointI struct {
-	X             int32                  `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             int32                  `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
+	X int32 `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y int32 `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
 }
 
 func (x *PointI) Reset() {
@@ -202,8 +202,8 @@ func (x *PointI) GetY() int32 {
 
 // Screen space rectangular area.
 type RectangleI struct {
-	P0            *PointI                `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
-	P1            *PointI                `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
+	P0 *PointI `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
+	P1 *PointI `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
 }
 
 func (x *RectangleI) Reset() {
@@ -242,8 +242,8 @@ func (x *RectangleI) GetP1() *PointI {
 // Point on the game board, 0..255.
 // Note: bottom left of the screen is 0, 0.
 type Point2D struct {
-	X             float32                `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             float32                `protobuf:"fixed32,2,opt,name=y,proto3" json:"y,omitempty"`
+	X float32 `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y float32 `protobuf:"fixed32,2,opt,name=y,proto3" json:"y,omitempty"`
 }
 
 func (x *Point2D) Reset() {
@@ -282,9 +282,9 @@ func (x *Point2D) GetY() float32 {
 // Point on the game board, 0..255.
 // Note: bottom left of the screen is 0, 0.
 type Point struct {
-	X             float32                `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             float32                `protobuf:"fixed32,2,opt,name=y,proto3" json:"y,omitempty"`
-	Z             float32                `protobuf:"fixed32,3,opt,name=z,proto3" json:"z,omitempty"`
+	X float32 `protobuf:"fixed32,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y float32 `protobuf:"fixed32,2,opt,name=y,proto3" json:"y,omitempty"`
+	Z float32 `protobuf:"fixed32,3,opt,name=z,proto3" json:"z,omitempty"`
 }
 
 func (x *Point) Reset() {
@@ -329,8 +329,8 @@ func (x *Point) GetZ() float32 {
 
 // Screen dimensions.
 type Size2DI struct {
-	X             int32                  `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
-	Y             int32                  `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
+	X int32 `protobuf:"varint,1,opt,name=x,proto3" json:"x,omitempty"`
+	Y int32 `protobuf:"varint,2,opt,name=y,proto3" json:"y,omitempty"`
 }
 
 func (x *Size2DI) Reset() {

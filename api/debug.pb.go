@@ -24,19 +24,19 @@ const (
 type DebugGameState int32
 
 const (
-	DebugGameState_nil DebugGameState = 0
-	DebugGameState_show_map           DebugGameState = 1
-	DebugGameState_control_enemy      DebugGameState = 2
-	DebugGameState_food               DebugGameState = 3
-	DebugGameState_free               DebugGameState = 4
-	DebugGameState_all_resources      DebugGameState = 5
-	DebugGameState_god                DebugGameState = 6
-	DebugGameState_minerals           DebugGameState = 7
-	DebugGameState_gas                DebugGameState = 8
-	DebugGameState_cooldown           DebugGameState = 9
-	DebugGameState_tech_tree          DebugGameState = 10
-	DebugGameState_upgrade            DebugGameState = 11
-	DebugGameState_fast_build         DebugGameState = 12
+	DebugGameState_nil           DebugGameState = 0
+	DebugGameState_show_map      DebugGameState = 1
+	DebugGameState_control_enemy DebugGameState = 2
+	DebugGameState_food          DebugGameState = 3
+	DebugGameState_free          DebugGameState = 4
+	DebugGameState_all_resources DebugGameState = 5
+	DebugGameState_god           DebugGameState = 6
+	DebugGameState_minerals      DebugGameState = 7
+	DebugGameState_gas           DebugGameState = 8
+	DebugGameState_cooldown      DebugGameState = 9
+	DebugGameState_tech_tree     DebugGameState = 10
+	DebugGameState_upgrade       DebugGameState = 11
+	DebugGameState_fast_build    DebugGameState = 12
 )
 
 // Enum value maps for DebugGameState.
@@ -265,7 +265,7 @@ type DebugCommand struct {
 	//	*DebugCommand_Score
 	//	*DebugCommand_EndGame
 	//	*DebugCommand_UnitValue
-	Command       isDebugCommand_Command `protobuf_oneof:"command"`
+	Command isDebugCommand_Command `protobuf_oneof:"command"`
 }
 
 func (x *DebugCommand) Reset() {
@@ -419,10 +419,10 @@ func (*DebugCommand_EndGame) isDebugCommand_Command() {}
 func (*DebugCommand_UnitValue) isDebugCommand_Command() {}
 
 type DebugDraw struct {
-	Text          []*DebugText           `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
-	Lines         []*DebugLine           `protobuf:"bytes,2,rep,name=lines,proto3" json:"lines,omitempty"`
-	Boxes         []*DebugBox            `protobuf:"bytes,3,rep,name=boxes,proto3" json:"boxes,omitempty"`
-	Spheres       []*DebugSphere         `protobuf:"bytes,4,rep,name=spheres,proto3" json:"spheres,omitempty"`
+	Text    []*DebugText   `protobuf:"bytes,1,rep,name=text,proto3" json:"text,omitempty"`
+	Lines   []*DebugLine   `protobuf:"bytes,2,rep,name=lines,proto3" json:"lines,omitempty"`
+	Boxes   []*DebugBox    `protobuf:"bytes,3,rep,name=boxes,proto3" json:"boxes,omitempty"`
+	Spheres []*DebugSphere `protobuf:"bytes,4,rep,name=spheres,proto3" json:"spheres,omitempty"`
 }
 
 func (x *DebugDraw) Reset() {
@@ -473,8 +473,8 @@ func (x *DebugDraw) GetSpheres() []*DebugSphere {
 }
 
 type Line struct {
-	P0            *Point                 `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
-	P1            *Point                 `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
+	P0 *Point `protobuf:"bytes,1,opt,name=p0,proto3" json:"p0,omitempty"`
+	P1 *Point `protobuf:"bytes,2,opt,name=p1,proto3" json:"p1,omitempty"`
 }
 
 func (x *Line) Reset() {
@@ -511,9 +511,9 @@ func (x *Line) GetP1() *Point {
 }
 
 type Color struct {
-	R             uint32                 `protobuf:"varint,1,opt,name=r,proto3" json:"r,omitempty"`
-	G             uint32                 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
-	B             uint32                 `protobuf:"varint,3,opt,name=b,proto3" json:"b,omitempty"`
+	R uint32 `protobuf:"varint,1,opt,name=r,proto3" json:"r,omitempty"`
+	G uint32 `protobuf:"varint,2,opt,name=g,proto3" json:"g,omitempty"`
+	B uint32 `protobuf:"varint,3,opt,name=b,proto3" json:"b,omitempty"`
 }
 
 func (x *Color) Reset() {
@@ -558,11 +558,11 @@ func (x *Color) GetB() uint32 {
 
 // Display debug text on screen.
 type DebugText struct {
-	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	Text          string                 `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`                               // Text to display.
-	VirtualPos    *Point                 `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos,proto3" json:"virtual_pos,omitempty"` // Virtualized position in 2D (the screen is 0..1, 0..1 for any resolution).
-	WorldPos      *Point                 `protobuf:"bytes,4,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`       // Position in the world.
-	Size          uint32                 `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                              // Pixel height of the text. Defaults to 8px.
+	Color      *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Text       string `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`                               // Text to display.
+	VirtualPos *Point `protobuf:"bytes,3,opt,name=virtual_pos,json=virtualPos,proto3" json:"virtual_pos,omitempty"` // Virtualized position in 2D (the screen is 0..1, 0..1 for any resolution).
+	WorldPos   *Point `protobuf:"bytes,4,opt,name=world_pos,json=worldPos,proto3" json:"world_pos,omitempty"`       // Position in the world.
+	Size       uint32 `protobuf:"varint,5,opt,name=size,proto3" json:"size,omitempty"`                              // Pixel height of the text. Defaults to 8px.
 }
 
 func (x *DebugText) Reset() {
@@ -621,8 +621,8 @@ func (x *DebugText) GetSize() uint32 {
 
 // Display debug lines on screen.
 type DebugLine struct {
-	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	Line          *Line                  `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"` // World space line.
+	Color *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Line  *Line  `protobuf:"bytes,2,opt,name=line,proto3" json:"line,omitempty"` // World space line.
 }
 
 func (x *DebugLine) Reset() {
@@ -660,9 +660,9 @@ func (x *DebugLine) GetLine() *Line {
 
 // Display debug boxes on screen.
 type DebugBox struct {
-	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	Min           *Point                 `protobuf:"bytes,2,opt,name=min,proto3" json:"min,omitempty"`
-	Max           *Point                 `protobuf:"bytes,3,opt,name=max,proto3" json:"max,omitempty"`
+	Color *Color `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	Min   *Point `protobuf:"bytes,2,opt,name=min,proto3" json:"min,omitempty"`
+	Max   *Point `protobuf:"bytes,3,opt,name=max,proto3" json:"max,omitempty"`
 }
 
 func (x *DebugBox) Reset() {
@@ -707,9 +707,9 @@ func (x *DebugBox) GetMax() *Point {
 
 // Display debug spheres on screen.
 type DebugSphere struct {
-	Color         *Color                 `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
-	P             *Point                 `protobuf:"bytes,2,opt,name=p,proto3" json:"p,omitempty"`
-	R             float32                `protobuf:"fixed32,3,opt,name=r,proto3" json:"r,omitempty"`
+	Color *Color  `protobuf:"bytes,1,opt,name=color,proto3" json:"color,omitempty"`
+	P     *Point  `protobuf:"bytes,2,opt,name=p,proto3" json:"p,omitempty"`
+	R     float32 `protobuf:"fixed32,3,opt,name=r,proto3" json:"r,omitempty"`
 }
 
 func (x *DebugSphere) Reset() {
@@ -753,10 +753,10 @@ func (x *DebugSphere) GetR() float32 {
 }
 
 type DebugCreateUnit struct {
-	UnitType      UnitTypeID                 `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	Owner         PlayerID                  `protobuf:"varint,2,opt,name=owner,proto3" json:"owner,omitempty"`
-	Pos           *Point2D               `protobuf:"bytes,3,opt,name=pos,proto3" json:"pos,omitempty"`
-	Quantity      uint32                 `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
+	UnitType UnitTypeID `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	Owner    PlayerID   `protobuf:"varint,2,opt,name=owner,proto3" json:"owner,omitempty"`
+	Pos      *Point2D   `protobuf:"bytes,3,opt,name=pos,proto3" json:"pos,omitempty"`
+	Quantity uint32     `protobuf:"varint,4,opt,name=quantity,proto3" json:"quantity,omitempty"`
 }
 
 func (x *DebugCreateUnit) Reset() {
@@ -807,7 +807,7 @@ func (x *DebugCreateUnit) GetQuantity() uint32 {
 }
 
 type DebugKillUnit struct {
-	Tag           []UnitTag               `protobuf:"varint,1,rep,packed,name=tag,proto3" json:"tag,omitempty"`
+	Tag []UnitTag `protobuf:"varint,1,rep,packed,name=tag,proto3" json:"tag,omitempty"`
 }
 
 func (x *DebugKillUnit) Reset() {
@@ -837,8 +837,8 @@ func (x *DebugKillUnit) GetTag() []UnitTag {
 }
 
 type DebugTestProcess struct {
-	Test          DebugTestProcess_Test  `protobuf:"varint,1,opt,name=test,proto3,enum=SC2APIProtocol.DebugTestProcess_Test" json:"test,omitempty"`
-	DelayMs       int32                  `protobuf:"varint,2,opt,name=delay_ms,json=delayMs,proto3" json:"delay_ms,omitempty"`
+	Test    DebugTestProcess_Test `protobuf:"varint,1,opt,name=test,proto3,enum=SC2APIProtocol.DebugTestProcess_Test" json:"test,omitempty"`
+	DelayMs int32                 `protobuf:"varint,2,opt,name=delay_ms,json=delayMs,proto3" json:"delay_ms,omitempty"`
 }
 
 func (x *DebugTestProcess) Reset() {
@@ -875,7 +875,7 @@ func (x *DebugTestProcess) GetDelayMs() int32 {
 }
 
 type DebugSetScore struct {
-	Score         float32                `protobuf:"fixed32,1,opt,name=score,proto3" json:"score,omitempty"`
+	Score float32 `protobuf:"fixed32,1,opt,name=score,proto3" json:"score,omitempty"`
 }
 
 func (x *DebugSetScore) Reset() {
@@ -905,7 +905,7 @@ func (x *DebugSetScore) GetScore() float32 {
 }
 
 type DebugEndGame struct {
-	EndResult     DebugEndGame_EndResult `protobuf:"varint,1,opt,name=end_result,json=endResult,proto3,enum=SC2APIProtocol.DebugEndGame_EndResult" json:"end_result,omitempty"`
+	EndResult DebugEndGame_EndResult `protobuf:"varint,1,opt,name=end_result,json=endResult,proto3,enum=SC2APIProtocol.DebugEndGame_EndResult" json:"end_result,omitempty"`
 }
 
 func (x *DebugEndGame) Reset() {
@@ -935,9 +935,9 @@ func (x *DebugEndGame) GetEndResult() DebugEndGame_EndResult {
 }
 
 type DebugSetUnitValue struct {
-	UnitValue     DebugSetUnitValue_UnitValue `protobuf:"varint,1,opt,name=unit_value,json=unitValue,proto3,enum=SC2APIProtocol.DebugSetUnitValue_UnitValue" json:"unit_value,omitempty"`
-	Value         float32                     `protobuf:"fixed32,2,opt,name=value,proto3" json:"value,omitempty"`
-	UnitTag       UnitTag                      `protobuf:"varint,3,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
+	UnitValue DebugSetUnitValue_UnitValue `protobuf:"varint,1,opt,name=unit_value,json=unitValue,proto3,enum=SC2APIProtocol.DebugSetUnitValue_UnitValue" json:"unit_value,omitempty"`
+	Value     float32                     `protobuf:"fixed32,2,opt,name=value,proto3" json:"value,omitempty"`
+	UnitTag   UnitTag                     `protobuf:"varint,3,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
 }
 
 func (x *DebugSetUnitValue) Reset() {

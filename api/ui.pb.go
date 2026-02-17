@@ -190,14 +190,14 @@ func (ActionMultiPanel_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type ObservationUI struct {
-	Groups []*ControlGroup        `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
+	Groups []*ControlGroup `protobuf:"bytes,1,rep,name=groups,proto3" json:"groups,omitempty"`
 	// Types that are valid to be assigned to Panel:
 	//
 	//	*ObservationUI_Single
 	//	*ObservationUI_Multi
 	//	*ObservationUI_Cargo
 	//	*ObservationUI_Production
-	Panel         isObservationUI_Panel `protobuf_oneof:"panel"`
+	Panel isObservationUI_Panel `protobuf_oneof:"panel"`
 }
 
 func (x *ObservationUI) Reset() {
@@ -298,9 +298,9 @@ func (*ObservationUI_Cargo) isObservationUI_Panel() {}
 func (*ObservationUI_Production) isObservationUI_Panel() {}
 
 type ControlGroup struct {
-	ControlGroupIndex uint32                 `protobuf:"varint,1,opt,name=control_group_index,json=controlGroupIndex,proto3" json:"control_group_index,omitempty"`
-	LeaderUnitType    UnitTypeID                 `protobuf:"varint,2,opt,name=leader_unit_type,json=leaderUnitType,proto3" json:"leader_unit_type,omitempty"`
-	Count             uint32                 `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
+	ControlGroupIndex uint32     `protobuf:"varint,1,opt,name=control_group_index,json=controlGroupIndex,proto3" json:"control_group_index,omitempty"`
+	LeaderUnitType    UnitTypeID `protobuf:"varint,2,opt,name=leader_unit_type,json=leaderUnitType,proto3" json:"leader_unit_type,omitempty"`
+	Count             uint32     `protobuf:"varint,3,opt,name=count,proto3" json:"count,omitempty"`
 }
 
 func (x *ControlGroup) Reset() {
@@ -344,17 +344,17 @@ func (x *ControlGroup) GetCount() uint32 {
 }
 
 type UnitInfo struct {
-	UnitType            UnitTypeID                 `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	PlayerRelative      Alliance                 `protobuf:"varint,2,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
-	Health              int32                  `protobuf:"varint,3,opt,name=health,proto3" json:"health,omitempty"`
-	Shields             int32                  `protobuf:"varint,4,opt,name=shields,proto3" json:"shields,omitempty"`
-	Energy              int32                  `protobuf:"varint,5,opt,name=energy,proto3" json:"energy,omitempty"`
-	TransportSlotsTaken int32                  `protobuf:"varint,6,opt,name=transport_slots_taken,json=transportSlotsTaken,proto3" json:"transport_slots_taken,omitempty"`
-	BuildProgress       float32                `protobuf:"fixed32,7,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
-	AddOn               *UnitInfo              `protobuf:"bytes,8,opt,name=add_on,json=addOn,proto3" json:"add_on,omitempty"`
-	MaxHealth           int32                  `protobuf:"varint,9,opt,name=max_health,json=maxHealth,proto3" json:"max_health,omitempty"`
-	MaxShields          int32                  `protobuf:"varint,10,opt,name=max_shields,json=maxShields,proto3" json:"max_shields,omitempty"`
-	MaxEnergy           int32                  `protobuf:"varint,11,opt,name=max_energy,json=maxEnergy,proto3" json:"max_energy,omitempty"`
+	UnitType            UnitTypeID `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
+	PlayerRelative      Alliance   `protobuf:"varint,2,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
+	Health              int32      `protobuf:"varint,3,opt,name=health,proto3" json:"health,omitempty"`
+	Shields             int32      `protobuf:"varint,4,opt,name=shields,proto3" json:"shields,omitempty"`
+	Energy              int32      `protobuf:"varint,5,opt,name=energy,proto3" json:"energy,omitempty"`
+	TransportSlotsTaken int32      `protobuf:"varint,6,opt,name=transport_slots_taken,json=transportSlotsTaken,proto3" json:"transport_slots_taken,omitempty"`
+	BuildProgress       float32    `protobuf:"fixed32,7,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
+	AddOn               *UnitInfo  `protobuf:"bytes,8,opt,name=add_on,json=addOn,proto3" json:"add_on,omitempty"`
+	MaxHealth           int32      `protobuf:"varint,9,opt,name=max_health,json=maxHealth,proto3" json:"max_health,omitempty"`
+	MaxShields          int32      `protobuf:"varint,10,opt,name=max_shields,json=maxShields,proto3" json:"max_shields,omitempty"`
+	MaxEnergy           int32      `protobuf:"varint,11,opt,name=max_energy,json=maxEnergy,proto3" json:"max_energy,omitempty"`
 }
 
 func (x *UnitInfo) Reset() {
@@ -454,11 +454,11 @@ func (x *UnitInfo) GetMaxEnergy() int32 {
 }
 
 type SinglePanel struct {
-	Unit               *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
-	AttackUpgradeLevel int32                  `protobuf:"varint,2,opt,name=attack_upgrade_level,json=attackUpgradeLevel,proto3" json:"attack_upgrade_level,omitempty"`
-	ArmorUpgradeLevel  int32                  `protobuf:"varint,3,opt,name=armor_upgrade_level,json=armorUpgradeLevel,proto3" json:"armor_upgrade_level,omitempty"`
-	ShieldUpgradeLevel int32                  `protobuf:"varint,4,opt,name=shield_upgrade_level,json=shieldUpgradeLevel,proto3" json:"shield_upgrade_level,omitempty"`
-	Buffs              []int32                `protobuf:"varint,5,rep,packed,name=buffs,proto3" json:"buffs,omitempty"`
+	Unit               *UnitInfo `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	AttackUpgradeLevel int32     `protobuf:"varint,2,opt,name=attack_upgrade_level,json=attackUpgradeLevel,proto3" json:"attack_upgrade_level,omitempty"`
+	ArmorUpgradeLevel  int32     `protobuf:"varint,3,opt,name=armor_upgrade_level,json=armorUpgradeLevel,proto3" json:"armor_upgrade_level,omitempty"`
+	ShieldUpgradeLevel int32     `protobuf:"varint,4,opt,name=shield_upgrade_level,json=shieldUpgradeLevel,proto3" json:"shield_upgrade_level,omitempty"`
+	Buffs              []int32   `protobuf:"varint,5,rep,packed,name=buffs,proto3" json:"buffs,omitempty"`
 }
 
 func (x *SinglePanel) Reset() {
@@ -516,7 +516,7 @@ func (x *SinglePanel) GetBuffs() []int32 {
 }
 
 type MultiPanel struct {
-	Units         []*UnitInfo            `protobuf:"bytes,1,rep,name=units,proto3" json:"units,omitempty"`
+	Units []*UnitInfo `protobuf:"bytes,1,rep,name=units,proto3" json:"units,omitempty"`
 }
 
 func (x *MultiPanel) Reset() {
@@ -546,9 +546,9 @@ func (x *MultiPanel) GetUnits() []*UnitInfo {
 }
 
 type CargoPanel struct {
-	Unit           *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
-	Passengers     []*UnitInfo            `protobuf:"bytes,2,rep,name=passengers,proto3" json:"passengers,omitempty"`
-	SlotsAvailable int32                  `protobuf:"varint,3,opt,name=slots_available,json=slotsAvailable,proto3" json:"slots_available,omitempty"` // TODO: Change to cargo size
+	Unit           *UnitInfo   `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	Passengers     []*UnitInfo `protobuf:"bytes,2,rep,name=passengers,proto3" json:"passengers,omitempty"`
+	SlotsAvailable int32       `protobuf:"varint,3,opt,name=slots_available,json=slotsAvailable,proto3" json:"slots_available,omitempty"` // TODO: Change to cargo size
 }
 
 func (x *CargoPanel) Reset() {
@@ -592,8 +592,8 @@ func (x *CargoPanel) GetSlotsAvailable() int32 {
 }
 
 type BuildItem struct {
-	AbilityId     AbilityID                 `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	BuildProgress float32                `protobuf:"fixed32,2,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
+	AbilityId     AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	BuildProgress float32   `protobuf:"fixed32,2,opt,name=build_progress,json=buildProgress,proto3" json:"build_progress,omitempty"` // Range: [0.0, 1.0]
 }
 
 func (x *BuildItem) Reset() {
@@ -630,7 +630,7 @@ func (x *BuildItem) GetBuildProgress() float32 {
 }
 
 type ProductionPanel struct {
-	Unit  *UnitInfo              `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+	Unit *UnitInfo `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
 	// build_queue ONLY gives information about units that are being produced.
 	// Use production_queue instead to see both units being trained as well as research in the queue.
 	BuildQueue      []*UnitInfo  `protobuf:"bytes,2,rep,name=build_queue,json=buildQueue,proto3" json:"build_queue,omitempty"`
@@ -689,7 +689,7 @@ type ActionUI struct {
 	//	*ActionUI_CargoPanel
 	//	*ActionUI_ProductionPanel
 	//	*ActionUI_ToggleAutocast
-	Action        isActionUI_Action `protobuf_oneof:"action"`
+	Action isActionUI_Action `protobuf_oneof:"action"`
 }
 
 func (x *ActionUI) Reset() {
@@ -896,7 +896,7 @@ func (x *ActionControlGroup) GetControlGroupIndex() uint32 {
 }
 
 type ActionSelectArmy struct {
-	SelectionAdd  bool                   `protobuf:"varint,1,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`
+	SelectionAdd bool `protobuf:"varint,1,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`
 }
 
 func (x *ActionSelectArmy) Reset() {
@@ -926,7 +926,7 @@ func (x *ActionSelectArmy) GetSelectionAdd() bool {
 }
 
 type ActionSelectWarpGates struct {
-	SelectionAdd  bool                   `protobuf:"varint,1,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`
+	SelectionAdd bool `protobuf:"varint,1,opt,name=selection_add,json=selectionAdd,proto3" json:"selection_add,omitempty"`
 }
 
 func (x *ActionSelectWarpGates) Reset() {
@@ -978,7 +978,7 @@ func (*ActionSelectLarva) Descriptor() ([]byte, []int) {
 }
 
 type ActionSelectIdleWorker struct {
-	Type          ActionSelectIdleWorker_Type `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.ActionSelectIdleWorker_Type" json:"type,omitempty"`
+	Type ActionSelectIdleWorker_Type `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.ActionSelectIdleWorker_Type" json:"type,omitempty"`
 }
 
 func (x *ActionSelectIdleWorker) Reset() {
@@ -1008,8 +1008,8 @@ func (x *ActionSelectIdleWorker) GetType() ActionSelectIdleWorker_Type {
 }
 
 type ActionMultiPanel struct {
-	Type          ActionMultiPanel_Type  `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.ActionMultiPanel_Type" json:"type,omitempty"`
-	UnitIndex     int32                  `protobuf:"varint,2,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
+	Type      ActionMultiPanel_Type `protobuf:"varint,1,opt,name=type,proto3,enum=SC2APIProtocol.ActionMultiPanel_Type" json:"type,omitempty"`
+	UnitIndex int32                 `protobuf:"varint,2,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
 }
 
 func (x *ActionMultiPanel) Reset() {
@@ -1046,7 +1046,7 @@ func (x *ActionMultiPanel) GetUnitIndex() int32 {
 }
 
 type ActionCargoPanelUnload struct {
-	UnitIndex     int32                  `protobuf:"varint,1,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
+	UnitIndex int32 `protobuf:"varint,1,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
 }
 
 func (x *ActionCargoPanelUnload) Reset() {
@@ -1076,7 +1076,7 @@ func (x *ActionCargoPanelUnload) GetUnitIndex() int32 {
 }
 
 type ActionProductionPanelRemoveFromQueue struct {
-	UnitIndex     int32                  `protobuf:"varint,1,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
+	UnitIndex int32 `protobuf:"varint,1,opt,name=unit_index,json=unitIndex,proto3" json:"unit_index,omitempty"`
 }
 
 func (x *ActionProductionPanelRemoveFromQueue) Reset() {
@@ -1106,7 +1106,7 @@ func (x *ActionProductionPanelRemoveFromQueue) GetUnitIndex() int32 {
 }
 
 type ActionToggleAutocast struct {
-	AbilityId     AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	AbilityId AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
 }
 
 func (x *ActionToggleAutocast) Reset() {

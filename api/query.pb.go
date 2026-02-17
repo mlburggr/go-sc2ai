@@ -76,9 +76,9 @@ func (x *RequestQuery) GetIgnoreResourceRequirements() bool {
 }
 
 type ResponseQuery struct {
-	Pathing       []*ResponseQueryPathing            `protobuf:"bytes,1,rep,name=pathing,proto3" json:"pathing,omitempty"`
-	Abilities     []*ResponseQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities,proto3" json:"abilities,omitempty"`
-	Placements    []*ResponseQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements,proto3" json:"placements,omitempty"`
+	Pathing    []*ResponseQueryPathing            `protobuf:"bytes,1,rep,name=pathing,proto3" json:"pathing,omitempty"`
+	Abilities  []*ResponseQueryAvailableAbilities `protobuf:"bytes,2,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	Placements []*ResponseQueryBuildingPlacement  `protobuf:"bytes,3,rep,name=placements,proto3" json:"placements,omitempty"`
 }
 
 func (x *ResponseQuery) Reset() {
@@ -127,8 +127,8 @@ type RequestQueryPathing struct {
 	//
 	//	*RequestQueryPathing_StartPos
 	//	*RequestQueryPathing_UnitTag
-	Start         isRequestQueryPathing_Start `protobuf_oneof:"start"`
-	EndPos        *Point2D                    `protobuf:"bytes,3,opt,name=end_pos,json=endPos,proto3" json:"end_pos,omitempty"`
+	Start  isRequestQueryPathing_Start `protobuf_oneof:"start"`
+	EndPos *Point2D                    `protobuf:"bytes,3,opt,name=end_pos,json=endPos,proto3" json:"end_pos,omitempty"`
 }
 
 func (x *RequestQueryPathing) Reset() {
@@ -199,7 +199,7 @@ func (*RequestQueryPathing_StartPos) isRequestQueryPathing_Start() {}
 func (*RequestQueryPathing_UnitTag) isRequestQueryPathing_Start() {}
 
 type ResponseQueryPathing struct {
-	Distance      float32                `protobuf:"fixed32,1,opt,name=distance,proto3" json:"distance,omitempty"` // 0 if no path exists
+	Distance float32 `protobuf:"fixed32,1,opt,name=distance,proto3" json:"distance,omitempty"` // 0 if no path exists
 }
 
 func (x *ResponseQueryPathing) Reset() {
@@ -230,7 +230,7 @@ func (x *ResponseQueryPathing) GetDistance() float32 {
 
 // --------------------------------------------------------------------------------------------------
 type RequestQueryAvailableAbilities struct {
-	UnitTag       UnitTag                 `protobuf:"varint,1,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
+	UnitTag UnitTag `protobuf:"varint,1,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
 }
 
 func (x *RequestQueryAvailableAbilities) Reset() {
@@ -260,9 +260,9 @@ func (x *RequestQueryAvailableAbilities) GetUnitTag() UnitTag {
 }
 
 type ResponseQueryAvailableAbilities struct {
-	Abilities     []*AvailableAbility    `protobuf:"bytes,1,rep,name=abilities,proto3" json:"abilities,omitempty"`
-	UnitTag       UnitTag                 `protobuf:"varint,2,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
-	UnitTypeId    UnitTypeID                 `protobuf:"varint,3,opt,name=unit_type_id,json=unitTypeId,proto3" json:"unit_type_id,omitempty"`
+	Abilities  []*AvailableAbility `protobuf:"bytes,1,rep,name=abilities,proto3" json:"abilities,omitempty"`
+	UnitTag    UnitTag             `protobuf:"varint,2,opt,name=unit_tag,json=unitTag,proto3" json:"unit_tag,omitempty"`
+	UnitTypeId UnitTypeID          `protobuf:"varint,3,opt,name=unit_type_id,json=unitTypeId,proto3" json:"unit_type_id,omitempty"`
 }
 
 func (x *ResponseQueryAvailableAbilities) Reset() {
@@ -307,9 +307,9 @@ func (x *ResponseQueryAvailableAbilities) GetUnitTypeId() UnitTypeID {
 
 // --------------------------------------------------------------------------------------------------
 type RequestQueryBuildingPlacement struct {
-	AbilityId      AbilityID                  `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
-	TargetPos      *Point2D               `protobuf:"bytes,2,opt,name=target_pos,json=targetPos,proto3" json:"target_pos,omitempty"`
-	PlacingUnitTag UnitTag                 `protobuf:"varint,3,opt,name=placing_unit_tag,json=placingUnitTag,proto3" json:"placing_unit_tag,omitempty"` // Not required
+	AbilityId      AbilityID `protobuf:"varint,1,opt,name=ability_id,json=abilityId,proto3" json:"ability_id,omitempty"`
+	TargetPos      *Point2D  `protobuf:"bytes,2,opt,name=target_pos,json=targetPos,proto3" json:"target_pos,omitempty"`
+	PlacingUnitTag UnitTag   `protobuf:"varint,3,opt,name=placing_unit_tag,json=placingUnitTag,proto3" json:"placing_unit_tag,omitempty"` // Not required
 }
 
 func (x *RequestQueryBuildingPlacement) Reset() {
@@ -353,7 +353,7 @@ func (x *RequestQueryBuildingPlacement) GetPlacingUnitTag() UnitTag {
 }
 
 type ResponseQueryBuildingPlacement struct {
-	Result        ActionResult           `protobuf:"varint,1,opt,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
+	Result ActionResult `protobuf:"varint,1,opt,name=result,proto3,enum=SC2APIProtocol.ActionResult" json:"result,omitempty"`
 }
 
 func (x *ResponseQueryBuildingPlacement) Reset() {

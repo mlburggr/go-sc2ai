@@ -24,7 +24,7 @@ const (
 type ActionResult int32
 
 const (
-	ActionResult_nil                    ActionResult = 0
+	ActionResult_nil                                 ActionResult = 0
 	ActionResult_Success                             ActionResult = 1
 	ActionResult_NotSupported                        ActionResult = 2
 	ActionResult_Error                               ActionResult = 3
