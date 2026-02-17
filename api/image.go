@@ -12,7 +12,7 @@ func (img ImageData) Copy() ImageData {
 
 	return ImageData{
 		BitsPerPixel: img.BitsPerPixel,
-		Size_:        &Size2DI{X: img.Size_.X, Y: img.Size_.Y},
+		Size:         &Size2DI{X: img.Size.X, Y: img.Size.Y},
 		Data:         data,
 	}
 }
@@ -25,11 +25,14 @@ func (img ImageData) assertBPP(count int32) {
 }
 
 // Bits returns a bit-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 1.
-func (img ImageData) Bits() ImageDataBits {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 1.
+func (img *ImageData) Bits() ImageDataBits {
+	if img == nil {
+		return ImageDataBits{}
+	}
 	img.assertBPP(1)
-
-	return ImageDataBits{imageData{*img.Size_, img.Data}}
+	return ImageDataBits{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataBits is a bit-indexed version of ImageData.
@@ -39,7 +42,7 @@ type ImageDataBits struct {
 
 // NewImageDataBits returns an empty bit-indexed ImageData of the given size.
 func NewImageDataBits(w, h int32) ImageDataBits {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, (w*h+7)/8)
 
 	return ImageDataBits{imageData{size, data}}
@@ -97,11 +100,14 @@ func (img ImageDataBits) ToBytes() ImageDataBytes {
 }
 
 // Bytes returns a byte-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 8.
-func (img ImageData) Bytes() ImageDataBytes {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 8.
+func (img *ImageData) Bytes() ImageDataBytes {
+	if img == nil {
+		return ImageDataBytes{}
+	}
 	img.assertBPP(8)
-
-	return ImageDataBytes{imageData{*img.Size_, img.Data}}
+	return ImageDataBytes{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataBytes is a byte-indexed version of ImageData.
@@ -111,7 +117,7 @@ type ImageDataBytes struct {
 
 // NewImageDataBytes returns an empty byte-indexed ImageData of the given size.
 func NewImageDataBytes(w, h int32) ImageDataBytes {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, w*h)
 
 	return ImageDataBytes{imageData{size, data}}
@@ -143,11 +149,14 @@ func (img ImageDataBytes) Set(x, y int32, value byte) {
 }
 
 // Ints returns an int32-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 32.
-func (img ImageData) Ints() ImageDataInt32 {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 32.
+func (img *ImageData) Ints() ImageDataInt32 {
+	if img == nil {
+		return ImageDataInt32{}
+	}
 	img.assertBPP(32)
-
-	return ImageDataInt32{imageData{*img.Size_, img.Data}}
+	return ImageDataInt32{imageData{*img.Size, img.Data}}
 }
 
 // ImageDataInt32 is an int32-indexed version of ImageData.
@@ -158,7 +167,7 @@ type ImageDataInt32 struct {
 
 // NewImageDataInts returns an empty int32-indexed ImageData of the given size.
 func NewImageDataInts(w, h int32) ImageDataInt32 {
-	size := Size2DI{int32(w), int32(h)}
+	size := Size2DI{X: int32(w), Y: int32(h)}
 	data := make([]byte, w*h*4)
 
 	return ImageDataInt32{imageData{size, data}}

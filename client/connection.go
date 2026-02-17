@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/chippydip/go-sc2ai/api"
-	"github.com/gogo/protobuf/proto"
 	"github.com/gorilla/websocket"
 )
 
@@ -104,7 +103,7 @@ func (c *connection) request(r *api.Request) (*api.Response, error) {
 	r.Id = atomic.AddUint32(&c.counter, 1)
 
 	// Serialize
-	data, err := proto.Marshal(r)
+	data, err := r.MarshalVT()
 	if err != nil {
 		return nil, err
 	}
@@ -125,7 +124,7 @@ func (c *connection) request(r *api.Request) (*api.Response, error) {
 
 	// Deserialize
 	resp := &api.Response{}
-	err = proto.Unmarshal(data, resp)
+	err = resp.UnmarshalVT(data)
 	if err != nil {
 		return nil, err
 	}

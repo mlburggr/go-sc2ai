@@ -197,7 +197,7 @@ var isMorph = map[api.AbilityID]bool{
 	ability.Morph_Overseer:          true,
 	ability.Morph_PlanetaryFortress: true,
 	ability.Morph_Ravager:           true,
-	ability.Train_Baneling:          true,
+	ability.Morph_Baneling:          true,
 	// ability.Morph_Archon:            true,
 	// ability.Morph_Hellbat:           true,
 	// ability.Morph_Hellion:           true,

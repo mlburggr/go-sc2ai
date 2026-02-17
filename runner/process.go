@@ -2,7 +2,6 @@ package runner
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
@@ -179,7 +178,7 @@ func sc2Path(path string) string {
 
 func getSubdirs(dir string) []string {
 	dirs := []string{}
-	files, _ := ioutil.ReadDir(dir)
+	files, _ := os.ReadDir(dir)
 	for _, f := range files {
 		if f.IsDir() {
 			dirs = append(dirs, f.Name())

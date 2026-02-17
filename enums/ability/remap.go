@@ -15,6 +15,7 @@ func Remap(ability api.AbilityID) api.AbilityID {
 
 var remap = map[api.AbilityID]api.AbilityID{
 	Attack_Attack:                              Attack,
+	Attack_AttackBuilding:                      Attack,
 	Attack_Battlecruiser:                       Attack,
 	Attack_Redirect:                            Attack,
 	Behavior_CloakOff_Banshee:                  Behavior_CloakOff,
@@ -92,6 +93,7 @@ var remap = map[api.AbilityID]api.AbilityID{
 	Cancel_StarportAddOn:                       Cancel,
 	Cancel_StasisTrap:                          Cancel,
 	Cancel_VoidRayPrismaticAlignment:           Cancel,
+	ChannelSnipe_1:                             Cancel,
 	Effect_Blink_Stalker:                       Effect_Blink,
 	Effect_MassRecall_MothershipCore:           Effect_MassRecall,
 	Effect_MassRecall_Nexus:                    Effect_MassRecall,
@@ -145,6 +147,7 @@ var remap = map[api.AbilityID]api.AbilityID{
 	Morph_Cancel_1519:                          Cancel,
 	Morph_Cancel_2480:                          Cancel,
 	Morph_Cancel_2482:                          Cancel,
+	Morph_Cancel_4120:                          Cancel,
 	Morph_SpineCrawlerRoot:                     Morph_Root,
 	Morph_SpineCrawlerUproot:                   Morph_Uproot,
 	Morph_SporeCrawlerRoot:                     Morph_Root,
@@ -205,6 +208,7 @@ var remap = map[api.AbilityID]api.AbilityID{
 	Research_ZergMissileWeaponsLevel3:          Research_ZergMissileWeapons,
 	Scan_Move:                                  Attack,
 	Stop_Battlecruiser:                         Stop,
+	Stop_Building:                              Stop,
 	Stop_Redirect:                              Stop,
 	Stop_Stop:                                  Stop,
 	UnloadAllAt_Medivac:                        UnloadAllAt,

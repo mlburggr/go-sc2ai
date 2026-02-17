@@ -4,22 +4,22 @@ package api
 
 // ToPoint2D converts to a Point2D.
 func (p PointI) ToPoint2D() Point2D {
-	return Point2D{float32(p.X), float32(p.Y)}
+	return Point2D{X: float32(p.X), Y: float32(p.Y)}
 }
 
 // ToPoint2DCentered converts to a Point2D and adds 0.5 to X/Y to center inside that map cell.
 func (p PointI) ToPoint2DCentered() Point2D {
-	return Point2D{float32(p.X) + 0.5, float32(p.Y) + 0.5}
+	return Point2D{X: float32(p.X) + 0.5, Y: float32(p.Y) + 0.5}
 }
 
 // ToPoint converts to a Point with zero Z coordinate.
 func (p PointI) ToPoint() Point {
-	return Point{float32(p.X), float32(p.Y), 0}
+	return Point{X: float32(p.X), Y: float32(p.Y), Z: 0}
 }
 
 // ToPointCentered to a Point with zero Z coordinate and adds 0.5 to X/Y to center inside that map cell.
 func (p PointI) ToPointCentered() Point {
-	return Point{float32(p.X) + 0.5, float32(p.Y) + 0.5, 0}
+	return Point{X: float32(p.X) + 0.5, Y: float32(p.Y) + 0.5, Z: 0}
 }
 
 // VecTo computes the vector from p -> p2.
@@ -52,24 +52,24 @@ func (p PointI) Add(v VecI) PointI {
 // Offset4By returns the Von Neumann neighborhood (or 4-neighborhood) of p.
 func (p PointI) Offset4By(by int32) [4]PointI {
 	return [...]PointI{
-		PointI{p.X, p.Y - by},
-		PointI{p.X + by, p.Y},
-		PointI{p.X, p.Y + by},
-		PointI{p.X - by, p.Y},
+		{X: p.X, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y},
+		{X: p.X, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y},
 	}
 }
 
 // Offset8By returns the Moore neighborhood (or 8-neighborhood) of p.
 func (p PointI) Offset8By(by int32) [8]PointI {
 	return [...]PointI{
-		PointI{p.X, p.Y - by},
-		PointI{p.X + by, p.Y - by},
-		PointI{p.X + by, p.Y},
-		PointI{p.X + by, p.Y + by},
-		PointI{p.X, p.Y + by},
-		PointI{p.X - by, p.Y + by},
-		PointI{p.X - by, p.Y},
-		PointI{p.X - by, p.Y - by},
+		{X: p.X, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y},
+		{X: p.X + by, Y: p.Y + by},
+		{X: p.X, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y},
+		{X: p.X - by, Y: p.Y - by},
 	}
 }
 
@@ -77,12 +77,12 @@ func (p PointI) Offset8By(by int32) [8]PointI {
 
 // ToPointI converts to a PointI by truncating X/Y.
 func (p Point2D) ToPointI() PointI {
-	return PointI{int32(p.X), int32(p.Y)}
+	return PointI{X: int32(p.X), Y: int32(p.Y)}
 }
 
 // ToPoint converts to a Point by truncating X/Y and setting Z to zero.
 func (p Point2D) ToPoint() Point {
-	return Point{p.X, p.Y, 0}
+	return Point{X: p.X, Y: p.Y, Z: 0}
 }
 
 // VecTo computes the vector from p -> p2.
@@ -123,24 +123,24 @@ func (p Point2D) Add(v Vec2D) Point2D {
 // Offset4By returns the Von Neumann neighborhood (or 4-neighborhood) of p.
 func (p Point2D) Offset4By(by float32) [4]Point2D {
 	return [...]Point2D{
-		Point2D{p.X, p.Y - by},
-		Point2D{p.X + by, p.Y},
-		Point2D{p.X, p.Y + by},
-		Point2D{p.X - by, p.Y},
+		{X: p.X, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y},
+		{X: p.X, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y},
 	}
 }
 
 // Offset8By returns the Moore neighborhood (or 8-neighborhood) of p.
 func (p Point2D) Offset8By(by float32) [8]Point2D {
 	return [...]Point2D{
-		Point2D{p.X, p.Y - by},
-		Point2D{p.X + by, p.Y - by},
-		Point2D{p.X + by, p.Y},
-		Point2D{p.X + by, p.Y + by},
-		Point2D{p.X, p.Y + by},
-		Point2D{p.X - by, p.Y + by},
-		Point2D{p.X - by, p.Y},
-		Point2D{p.X - by, p.Y - by},
+		{X: p.X, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y - by},
+		{X: p.X + by, Y: p.Y},
+		{X: p.X + by, Y: p.Y + by},
+		{X: p.X, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y + by},
+		{X: p.X - by, Y: p.Y},
+		{X: p.X - by, Y: p.Y - by},
 	}
 }
 
@@ -148,12 +148,12 @@ func (p Point2D) Offset8By(by float32) [8]Point2D {
 
 // ToPointI converts to a PointI by truncating X/Y and dropping Z.
 func (p Point) ToPointI() PointI {
-	return PointI{int32(p.X), int32(p.Y)}
+	return PointI{X: int32(p.X), Y: int32(p.Y)}
 }
 
 // ToPoint2D converts to a Point2D by dropping Z.
 func (p Point) ToPoint2D() Point2D {
-	return Point2D{p.X, p.Y}
+	return Point2D{X: p.X, Y: p.Y}
 }
 
 // VecTo computes the vector from p -> p2.

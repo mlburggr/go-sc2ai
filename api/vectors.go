@@ -9,22 +9,22 @@ type VecI PointI
 
 // Neg flips a vector to point in the opposite direction.
 func (v VecI) Neg() VecI {
-	return VecI{-v.X, -v.Y}
+	return VecI{X: -v.X, Y: -v.Y}
 }
 
 // Add two vectors and return the result.
 func (v VecI) Add(v2 VecI) VecI {
-	return VecI{v.X + v2.X, v.Y + v2.Y}
+	return VecI{X: v.X + v2.X, Y: v.Y + v2.Y}
 }
 
 // Sub subtracts two vectors and returns the results.
 func (v VecI) Sub(v2 VecI) VecI {
-	return VecI{v.X - v2.X, v.Y - v2.Y}
+	return VecI{X: v.X - v2.X, Y: v.Y - v2.Y}
 }
 
 // Mul scales the vector by a constant.
 func (v VecI) Mul(c int32) VecI {
-	return VecI{v.X * c, v.Y * c}
+	return VecI{X: v.X * c, Y: v.Y * c}
 }
 
 // Dot computes the dot product with another vector.
@@ -63,32 +63,32 @@ type Vec2D Point2D
 
 // Neg flips a vector to point in the opposite direction.
 func (v Vec2D) Neg() Vec2D {
-	return Vec2D{-v.X, -v.Y}
+	return Vec2D{X: -v.X, Y: -v.Y}
 }
 
 // Add two vectors and return the result.
 func (v Vec2D) Add(v2 Vec2D) Vec2D {
-	return Vec2D{v.X + v2.X, v.Y + v2.Y}
+	return Vec2D{X: v.X + v2.X, Y: v.Y + v2.Y}
 }
 
 // Sub subtracts two vectors and returns the results.
 func (v Vec2D) Sub(v2 Vec2D) Vec2D {
-	return Vec2D{v.X - v2.X, v.Y - v2.Y}
+	return Vec2D{X: v.X - v2.X, Y: v.Y - v2.Y}
 }
 
 // Mul scales the vector by a constant.
 func (v Vec2D) Mul(c float32) Vec2D {
-	return Vec2D{v.X * c, v.Y * c}
+	return Vec2D{X: v.X * c, Y: v.Y * c}
 }
 
 // Div scaled the vector by the inverse of a constant.
 func (v Vec2D) Div(c float32) Vec2D {
-	return Vec2D{v.X / c, v.Y / c}
+	return Vec2D{X: v.X / c, Y: v.Y / c}
 }
 
 // Mul64 scales the vector by a 64-bit constant. This involves additional casting so Mul should be preferred when 32-bits are sufficient.
 func (v Vec2D) Mul64(c float64) Vec2D {
-	return Vec2D{float32(float64(v.X) * c), float32(float64(v.Y) * c)}
+	return Vec2D{X: float32(float64(v.X) * c), Y: float32(float64(v.Y) * c)}
 }
 
 // Dot computes the dot product with another vector.
@@ -135,7 +135,7 @@ func (v Vec2D) Quadrant(n int) Vec2D {
 	a = 2 * math.Pi * float64(q) / float64(n)
 
 	y, x := math.Sincos(a)
-	return Vec2D{float32(x), float32(y)}
+	return Vec2D{X: float32(x), Y: float32(y)}
 }
 
 // Vec is a 3D vector with real components.
@@ -143,32 +143,32 @@ type Vec Point
 
 // Neg flips a vector to point in the opposite direction.
 func (v Vec) Neg() Vec {
-	return Vec{-v.X, -v.Y, -v.Z}
+	return Vec{X: -v.X, Y: -v.Y, Z: -v.Z}
 }
 
 // Add two vectors and return the result.
 func (v Vec) Add(v2 Vec) Vec {
-	return Vec{v.X + v2.X, v.Y + v2.Y, v.Z + v2.Z}
+	return Vec{X: v.X + v2.X, Y: v.Y + v2.Y, Z: v.Z + v2.Z}
 }
 
 // Sub subtracts two vectors and returns the results.
 func (v Vec) Sub(v2 Vec) Vec {
-	return Vec{v.X - v2.X, v.Y - v2.Y, v.Z - v2.Z}
+	return Vec{X: v.X - v2.X, Y: v.Y - v2.Y, Z: v.Z - v2.Z}
 }
 
 // Mul scales the vector by a constant.
 func (v Vec) Mul(c float32) Vec {
-	return Vec{v.X * c, v.Y * c, v.Z * c}
+	return Vec{X: v.X * c, Y: v.Y * c, Z: v.Z * c}
 }
 
 // Div scaled the vector by the inverse of a constant.
 func (v Vec) Div(c float32) Vec {
-	return Vec{v.X / c, v.Y / c, v.Z / c}
+	return Vec{X: v.X / c, Y: v.Y / c, Z: v.Z / c}
 }
 
 // Mul64 scales the vector by a 64-bit constant. This involves additional casting so Mul should be preferred when 32-bits are sufficient.
 func (v Vec) Mul64(c float64) Vec {
-	return Vec{float32(float64(v.X) * c), float32(float64(v.Y) * c), float32(float64(v.Z) * c)}
+	return Vec{X: float32(float64(v.X) * c), Y: float32(float64(v.Y) * c), Z: float32(float64(v.Z) * c)}
 }
 
 // Dot computes the dot product with another vector.
@@ -212,5 +212,5 @@ func (v Vec) Norm() Vec {
 
 // Cross computes the cross product of v x v2.
 func (v Vec) Cross(v2 Vec) Vec {
-	return Vec{v.Y*v2.Z - v.Z*v2.Y, v.Z*v2.X - v.X*v2.Z, v.X*v2.Y - v.Y*v2.X}
+	return Vec{X: v.Y*v2.Z - v.Z*v2.Y, Y: v.Z*v2.X - v.X*v2.Z, Z: v.X*v2.Y - v.Y*v2.X}
 }

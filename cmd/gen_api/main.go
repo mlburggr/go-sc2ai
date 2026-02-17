@@ -1,31 +1,39 @@
 package main
 
 import (
-	"bufio"
+	"flag"
 	"fmt"
-	"gopkg.in/src-d/go-git.v4"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
+
+	git "github.com/go-git/go-git/v5"
 )
 
+var debug = flag.Bool("debug", false, "preserve temp proto files for inspection")
+
 func main() {
+	flag.Parse()
+
 	// Checkout a temp copy of the API files
-	dir, err := ioutil.TempDir("", "s2client-proto")
+	dir, err := os.MkdirTemp("", "s2client-proto")
 	check(err)
 	defer os.RemoveAll(dir)
 
-	// // Preserve the test directory to look at
-	// defer func() {
-	// 	if err := recover(); err != nil {
-	// 		fmt.Println(err)
-	// 	}
-
-	// 	fmt.Print("Press 'Enter' to continue...")
-	// 	bufio.NewReader(os.Stdin).ReadBytes('\n')
-	// }()
+	if *debug {
+		// Pause before deleting modified proto files
+		fmt.Println("Proto files in:", dir)
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println(err)
+			}
+			fmt.Print("Press Enter to continue...")
+			b := make([]byte, 1)
+			os.Stdin.Read(b)
+		}()
+	}
 
 	_, err = git.PlainClone(dir, false, &git.CloneOptions{
 		URL:      "https://github.com/Blizzard/s2client-proto",
@@ -35,15 +43,13 @@ func main() {
 
 	// Get all the .proto files
 	protoDir := filepath.Join(dir, "s2clientprotocol")
-	files, err := ioutil.ReadDir(protoDir)
+	files, err := os.ReadDir(protoDir)
 	check(err)
 
-	s := string(os.PathSeparator)
 	protocArgs := []string{
-		"-I=" + os.Getenv("GOPATH") + s + "src" + s + "github.com" + s + "gogo" + s + "protobuf" + s + "gogoproto",
-		"-I=" + os.Getenv("GOPATH") + s + "src" + s + "github.com" + s + "gogo" + s + "protobuf" + s + "protobuf",
 		"--proto_path=" + protoDir,
-		"--gogofaster_out=api",
+		"--go_out=.", "--go_opt=module=github.com/chippydip/go-sc2ai",
+		"--go-vtproto_out=.", "--go-vtproto_opt=module=github.com/chippydip/go-sc2ai,features=marshal+unmarshal+size",
 	}
 	for _, file := range files {
 		if filepath.Ext(file.Name()) != ".proto" {
@@ -52,127 +58,65 @@ func main() {
 		path := filepath.Join(protoDir, file.Name())
 
 		// Upgrade the file to proto3 and fix the package name
-		writeLines(path, upgradeProto(path))
+		upgradeProto(path)
 
 		// Add the file to the list of command line args for protoc
 		protocArgs = append(protocArgs, path)
 	}
 
-	// Make sure we mapped all the expected types
-	if len(typeMap) != 0 {
-		fmt.Println("Not all types were mapped, missing:")
-		for key := range typeMap {
-			fmt.Println(key)
-		}
-	}
-
 	// Generate go code from the .proto files
-	fmt.Println("protoc " + strings.Join(protocArgs, " ") + "\n\n")
+	fmt.Println("protoc " + strings.Join(protocArgs, " "))
+	fmt.Println()
 	out, err := exec.Command("protoc", protocArgs...).CombinedOutput()
-	fmt.Println(string(out) + "\n\n")
-	fmt.Println(err)
-}
-
-// Thing we want to use twice
-const (
-	importPrefix   = "import \"s2clientprotocol/"
-	optionalPrefix = "optional "
-	enumPrefix     = "enum "
-	messagePrefix  = "message "
-)
-
-func upgradeProto(path string) []string {
-	file, err := os.Open(path)
+	if len(out) > 0 {
+		fmt.Println(string(out))
+	}
 	check(err)
-	defer file.Close()
 
-	propPath := []string{}
-	var lines []string
+	// Post-process generated files: add semantic types, fix enum naming,
+	// and strip protoimpl internals for vtprotobuf-only usage.
+	postProcessGeneratedFiles()
 
-	// Read line by line, making modifications as needed
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		// Get the line and trim comments and whitespace to make matching easier
-		line := scanner.Text()
-		if comment := strings.Index(line, "//"); comment > 0 {
-			line = line[:comment]
-		}
-		line = strings.TrimSpace(line)
+	// Generate typed wrappers for ImageData fields in spatial.pb.go.
+	generateTypedImageData()
 
-		switch {
-		// Upgrade to proto3 and set the go package name
-		case line == "syntax = \"proto2\";":
-			lines = append(lines, "syntax = \"proto3\";", "option go_package = \"./;api\";\nimport \"gogo.proto\";")
-
-		// Remove subdirectory of the import so the output path isn't nested
-		case strings.HasPrefix(line, importPrefix):
-			lines = append(lines, "import \""+line[len(importPrefix):])
-
-		// Remove "optional" prefixes (they are implicit in proto3)
-		case strings.HasPrefix(line, optionalPrefix):
-			lines = append(lines, mapTypes(propPath, line[len(optionalPrefix):]))
-
-		// Track where we are in the path
-		case strings.HasSuffix(line, " {"):
-			id := strings.Split(line, " ")[1] // "<type> Identifier {"
-			propPath = append(propPath, id)
-
-			lines = append(lines, line)
-
-			// Enums must have a zero value in proto3 (and unfortunately they must be unique due to C++ scoping rules)
-			if strings.HasPrefix(line, enumPrefix) && line != "enum Race {" && line != "enum CloakState {" {
-				lines = append(lines, line[len(enumPrefix):len(line)-2]+"_nil = 0 [(gogoproto.enumvalue_customname) = \"nil\"];")
-			}
-
-		// Pop the last path element
-		case line == "}":
-			if propPath[len(propPath)-1] == "Unit" {
-				lines = append(lines,
-					"repeated AvailableAbility actions = 100;",
-				)
-			}
-			propPath = propPath[:len(propPath)-1]
-			lines = append(lines, line)
-
-		// Everything else just gets copied to the output
-		default:
-			lines = append(lines, mapTypes(propPath, line))
-		}
+	// Format all generated files.
+	out, err = exec.Command("go", "fmt", "./api/...").CombinedOutput()
+	if len(out) > 0 {
+		fmt.Print(string(out))
 	}
-
-	return lines
-}
-
-func mapTypes(path []string, line string) string {
-	parts := strings.Split(line, " ")
-	if len(parts) < 4 {
-		return line // need at least "<type> <name> = <num>;"
-	}
-
-	key := strings.Join(path, ".") + "." + parts[len(parts)-3]
-	if value, ok := typeMap[key]; ok {
-		// Add the casttype option
-		opt := fmt.Sprintf("[(gogoproto.casttype) = \"%v\"];", value)
-
-		last := parts[len(parts)-1]
-		parts = append(parts[:len(parts)-1], last[:len(last)-1], opt)
-		delete(typeMap, key) // track which ones have been processed
-		return strings.Join(parts, " ")
-	}
-
-	return line
-}
-
-func writeLines(path string, lines []string) {
-	file, err := os.Create(path)
 	check(err)
-	defer file.Close()
+}
 
-	writer := bufio.NewWriter(file)
-	for _, line := range lines {
-		fmt.Fprintln(writer, line)
-	}
-	check(writer.Flush())
+// upgradeProto converts a proto2 file to proto3 and sets the Go package option.
+func upgradeProto(path string) {
+	content, err := os.ReadFile(path)
+	check(err)
+	text := string(content)
+
+	// Upgrade syntax and set Go package
+	text = strings.Replace(text, `syntax = "proto2";`,
+		"syntax = \"proto3\";\noption go_package = \"github.com/chippydip/go-sc2ai/api\";", 1)
+
+	// Fix import paths (remove s2clientprotocol/ subdirectory)
+	text = strings.ReplaceAll(text, `import "s2clientprotocol/`, `import "`)
+
+	// Remove "optional" qualifier (implicit in proto3)
+	optionalRe := regexp.MustCompile(`(?m)^(\s*)optional `)
+	text = optionalRe.ReplaceAllString(text, "$1")
+
+	// Add zero values for enums (required in proto3; Race and CloakState already have them)
+	enumRe := regexp.MustCompile(`(?m)^(\s*)enum (\w+) \{`)
+	text = enumRe.ReplaceAllStringFunc(text, func(match string) string {
+		groups := enumRe.FindStringSubmatch(match)
+		name := groups[2]
+		if name == "Race" || name == "CloakState" {
+			return match
+		}
+		return match + "\n" + groups[1] + "  " + name + "_nil = 0;"
+	})
+
+	check(os.WriteFile(path, []byte(text), 0644))
 }
 
 func check(err error) {
@@ -180,77 +124,3 @@ func check(err error) {
 		panic(err)
 	}
 }
-
-// Make the API more type-safe
-var typeMap = map[string]string{
-	// common.proto
-	"AvailableAbility.ability_id": "AbilityID",
-	// data.proto
-	"AbilityData.ability_id":           "AbilityID",
-	"AbilityData.remaps_to_ability_id": "AbilityID",
-	"UnitTypeData.unit_id":             "UnitTypeID",
-	"UnitTypeData.ability_id":          "AbilityID",
-	"UnitTypeData.tech_alias":          "UnitTypeID",
-	"UnitTypeData.unit_alias":          "UnitTypeID",
-	"UnitTypeData.tech_requirement":    "UnitTypeID",
-	"UpgradeData.upgrade_id":           "UpgradeID",
-	"UpgradeData.ability_id":           "AbilityID",
-	"BuffData.buff_id":                 "BuffID",
-	"EffectData.effect_id":             "EffectID",
-	// debug.proto
-	"DebugCreateUnit.unit_type":  "UnitTypeID",
-	"DebugCreateUnit.owner":      "PlayerID",
-	"DebugKillUnit.tag":          "UnitTag",
-	"DebugSetUnitValue.unit_tag": "UnitTag",
-	// error.proto
-	// query.proto
-	"RequestQueryPathing.start.unit_tag":             "UnitTag",
-	"RequestQueryAvailableAbilities.unit_tag":        "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_tag":       "UnitTag",
-	"ResponseQueryAvailableAbilities.unit_type_id":   "UnitTypeID",
-	"RequestQueryBuildingPlacement.ability_id":       "AbilityID",
-	"RequestQueryBuildingPlacement.placing_unit_tag": "UnitTag",
-	// raw.proto
-	"PowerSource.tag":                             "UnitTag",
-	"PlayerRaw.upgrade_ids":                       "UpgradeID",
-	"UnitOrder.ability_id":                        "AbilityID",
-	"UnitOrder.target.target_unit_tag":            "UnitTag",
-	"PassengerUnit.tag":                           "UnitTag",
-	"PassengerUnit.unit_type":                     "UnitTypeID",
-	"Unit.tag":                                    "UnitTag",
-	"Unit.unit_type":                              "UnitTypeID",
-	"Unit.owner":                                  "PlayerID",
-	"Unit.add_on_tag":                             "UnitTag",
-	"Unit.buff_ids":                               "BuffID",
-	"Unit.engaged_target_tag":                     "UnitTag",
-	"Event.dead_units":                            "UnitTag",
-	"Effect.effect_id":                            "EffectID",
-	"ActionRawUnitCommand.ability_id":             "AbilityID",
-	"ActionRawUnitCommand.target.target_unit_tag": "UnitTag",
-	"ActionRawUnitCommand.unit_tags":              "UnitTag",
-	"ActionRawToggleAutocast.ability_id":          "AbilityID",
-	"ActionRawToggleAutocast.unit_tags":           "UnitTag",
-	// sc2api.proto
-	"RequestJoinGame.participation.observed_player_id": "PlayerID",
-	"ResponseJoinGame.player_id":                       "PlayerID",
-	"RequestStartReplay.observed_player_id":            "PlayerID",
-	"ChatReceived.player_id":                           "PlayerID",
-	"PlayerInfo.player_id":                             "PlayerID",
-	"PlayerCommon.player_id":                           "PlayerID",
-	"ActionError.unit_tag":                             "UnitTag",
-	"ActionError.ability_id":                           "AbilityID",
-	"ActionObserverPlayerPerspective.player_id":        "PlayerID",
-	"ActionObserverCameraFollowPlayer.player_id":       "PlayerID",
-	"ActionObserverCameraFollowUnits.unit_tags":        "UnitTag",
-	"PlayerResult.player_id":                           "PlayerID",
-	// score.proto
-	// spatial.proto
-	// ui.proto
-	"ControlGroup.leader_unit_type":   "UnitTypeID",
-	"UnitInfo.unit_type":              "UnitTypeID",
-	"UnitInfo.player_relative":        "PlayerID", // TODO: is this correct?
-	"BuildItem.ability_id":            "AbilityID",
-	"ActionToggleAutocast.ability_id": "AbilityID",
-}
-
-// TODO: spatial.proto?
