@@ -345,7 +345,7 @@ func (x *ControlGroup) GetCount() uint32 {
 
 type UnitInfo struct {
 	UnitType            UnitTypeID                 `protobuf:"varint,1,opt,name=unit_type,json=unitType,proto3" json:"unit_type,omitempty"`
-	PlayerRelative      PlayerID                 `protobuf:"varint,2,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
+	PlayerRelative      Alliance                 `protobuf:"varint,2,opt,name=player_relative,json=playerRelative,proto3" json:"player_relative,omitempty"`
 	Health              int32                  `protobuf:"varint,3,opt,name=health,proto3" json:"health,omitempty"`
 	Shields             int32                  `protobuf:"varint,4,opt,name=shields,proto3" json:"shields,omitempty"`
 	Energy              int32                  `protobuf:"varint,5,opt,name=energy,proto3" json:"energy,omitempty"`
@@ -383,7 +383,7 @@ func (x *UnitInfo) GetUnitType() UnitTypeID {
 	return 0
 }
 
-func (x *UnitInfo) GetPlayerRelative() PlayerID {
+func (x *UnitInfo) GetPlayerRelative() Alliance {
 	if x != nil {
 		return x.PlayerRelative
 	}

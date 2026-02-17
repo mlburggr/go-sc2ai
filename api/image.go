@@ -25,10 +25,13 @@ func (img ImageData) assertBPP(count int32) {
 }
 
 // Bits returns a bit-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 1.
-func (img ImageData) Bits() ImageDataBits {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 1.
+func (img *ImageData) Bits() ImageDataBits {
+	if img == nil {
+		return ImageDataBits{}
+	}
 	img.assertBPP(1)
-
 	return ImageDataBits{imageData{*img.Size, img.Data}}
 }
 
@@ -97,10 +100,13 @@ func (img ImageDataBits) ToBytes() ImageDataBytes {
 }
 
 // Bytes returns a byte-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 8.
-func (img ImageData) Bytes() ImageDataBytes {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 8.
+func (img *ImageData) Bytes() ImageDataBytes {
+	if img == nil {
+		return ImageDataBytes{}
+	}
 	img.assertBPP(8)
-
 	return ImageDataBytes{imageData{*img.Size, img.Data}}
 }
 
@@ -143,10 +149,13 @@ func (img ImageDataBytes) Set(x, y int32, value byte) {
 }
 
 // Ints returns an int32-indexed version of the ImageData.
-// It panics if ImageData.BitsPerPixel != 32.
-func (img ImageData) Ints() ImageDataInt32 {
+// Returns a zero value if img is nil.
+// Panics if ImageData.BitsPerPixel != 32.
+func (img *ImageData) Ints() ImageDataInt32 {
+	if img == nil {
+		return ImageDataInt32{}
+	}
 	img.assertBPP(32)
-
 	return ImageDataInt32{imageData{*img.Size, img.Data}}
 }
 

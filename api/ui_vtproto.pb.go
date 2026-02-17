@@ -1966,7 +1966,7 @@ func (m *UnitInfo) UnmarshalVT(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.PlayerRelative |= PlayerID(b&0x7F) << shift
+				m.PlayerRelative |= Alliance(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
