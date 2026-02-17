@@ -79,6 +79,13 @@ func main() {
 
 	// Generate typed wrappers for ImageData fields in spatial.pb.go.
 	generateTypedImageData()
+
+	// Format all generated files.
+	out, err = exec.Command("go", "fmt", "./api/...").CombinedOutput()
+	if len(out) > 0 {
+		fmt.Print(string(out))
+	}
+	check(err)
 }
 
 // upgradeProto converts a proto2 file to proto3 and sets the Go package option.
